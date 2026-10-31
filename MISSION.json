@@ -1,0 +1,40 @@
+{
+  "mission": "« Qui a volé le Soleil ? » — jeu d'enquête/déduction ponctuel demandé le 2026-10-31 : 6 affaires écrites à la main à solution unique, tableau d'hypothèses présent/absent/possible, contradictions déductibles, accusations avec retour utile, indices progressifs, explication finale, EN/FR/ES, direction visuelle carnet illustré/soleil orange/ville pastel, validation formelle, publication LOB7 selon quotas.",
+  "status": "in-progress",
+  "startedAt": "2026-10-31T22:10+01:00",
+  "lock": "_private/lock-mission-direct-20261031-soleil-vole",
+  "artFamily": "Papier & encre / carnet d'enquête pastel : papier ivoire #f6efdc, encre sépia #33291f, fil rouge vermillon #c8402e, soleil orange #e8930c/#f5b731, bande pastel par affaire (menthe, ciel, pêche, sauge, rose, or). Distinct des familles récentes (manga N&B, désert midi, charpente, espace graphite, piscine) — règle artDirection respectée.",
+  "game": {
+    "name": "Who Stole the Sun?",
+    "nameFr": "Qui a volé le Soleil ?",
+    "nameEs": "¿Quién robó el Sol?",
+    "type": "déduction / carnet d'enquête solo",
+    "cases": 6,
+    "difficulty": "1 à 5 soleils, croissante, affaire 6 = finale (histoire en une vallée, 6 villes)",
+    "stack": "HTML/JS/CSS statique autonome, un seul index.html 100 % inline (~130 Kio), zéro dépendance, portraits SVG générés, audio WebAudio synthétisé, localStorage try/catch, hook QA window.__SV",
+    "i18n": "EN (défaut) / FR / ES complet (affaires, pièces, juge, indices, explications, UI)",
+    "fairPlay": [
+      "une déclaration sur soi-même ne prouve rien sans corroboración indépendante",
+      "une exclusion repose toujours sur un fait vérifiable (registre, tiers, trace)",
+      "solution unique prouvée mécaniquement ; indice décisif nécessaire (écarte au moins un rival que nul autre n'écarte)",
+      "aucune couleur indispensable : la pièce décisive des 6 affaires est sans mot de couleur ; marqueurs ✓/?/✗ avec symboles + texte"
+    ]
+  },
+  "validation": {
+    "suite": "node --test (games/soleil-vole-dev/tests.test.mjs, contre le VRAI index.html via vm)",
+    "results": "15/15 verts — invariants formels I1-I5, unicité par force brute (un seul couple coupable×lieu survivant par affaire), difficulté croissante, scènes réparties, parité i18n EN/FR/ES, 3 indices sans fuite du nom du coupable, pièce décisive sans couleur, exclusions jamais couleur-seule (noms propres comme « Rose » neutralisés), juge (cite une pièce qui contredit le rival ; coupable juste + reste faux = message générique sans fuite), accusation exacte réussie sur les 6 affaires, étoiles, machine à états complète + persistance + langues, paquet autonome sans lien externe",
+    "browserPlay": "Navigateur réel (IAB, http local) : accueil 6 cartes + soleils difficulté (1-5), affaire 1 jouée en entier (dossier 8 pièces, tableau d'hypothèses ✓/?/✗ avec aria-pressed, indice révélé + compteur, accusation erronée → juge cite la Pièce 1 + compteur d'erreurs, accusation exacte → écran résolution : tampon, verdict, résumé coupable/lieu/pièce décisive, 5 étapes + 7 renvois cliquables, épilogue, 2 étoiles pour 1 indice + 1 erreur), retour accueil avec tampon, FR et ES complets, affaire 6 finale (12 pièces, 5 événements, 4 lieux, badge Finale), progression persistée après rechargement, mobile 390 px sans débordement.",
+    "captures": [
+      "evidence/soleil-vole/01-cas1-suspects.png",
+      "evidence/soleil-vole/02-juge-accusation-fausse.png",
+      "evidence/soleil-vole/03-resolution-cas1.png",
+      "evidence/soleil-vole/04-accueil-fr.png",
+      "evidence/soleil-vole/05-cas6-es-expediente.png",
+      "evidence/soleil-vole/06-mobile-accueil-390.png"
+    ],
+    "limits": "Routage des clics du panneau IAB capricieux (problème local connu) → interactions pilotées par clics coordonnées réels + handlers du jeu ; audio implémenté mais non audité à l'oreille de bout en bout ; pas de téléphone physique (viewport 390 émulé) ; équilibrage = conception formelle, pas mesuré sur testeurs."
+  },
+  "repo": { "pending": "à compléter après création du dépôt public" },
+  "lob7": { "pending": "à compléter après publication" },
+  "resumeIfInterrupted": "1) verrou présent ? reprendre ; 2) dépôt GitHub créé/poussé ? ; 3) brouillon LOB7 existant (browser drafts) → update --ref main, ownership, prepare, publish ; 4) jouer au lecteur public + captures ; 5) compléter ce fichier + journal.json (entrée creation-direct-soleil-vole) ; 6) lever le verrou."
+}

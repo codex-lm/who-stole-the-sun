@@ -1,0 +1,11 @@
+{
+  "title": "Who Stole the Sun?",
+  "description": "A pocket detective notebook: six towns, six missing miniature suns. Read the exhibits, cross-check the timelines, mark your board, then name the culprit, the scene and the decisive exhibit before the judge. Six hand-written cases of rising difficulty, each with a unique solution and a full step-by-step explanation. EN/FR/ES.",
+  "entrypoint": "index.html",
+  "license": "MIT",
+  "genre": ["puzzle", "deduction"],
+  "themes": ["detective", "notebook", "pastel", "family"],
+  "controls": ["Click or tap: read exhibits, mark your board, make an accusation", "Works with mouse, touch and keyboard"],
+  "credits": ["Concept: Cédric Bernadac", "Game made by Z-Code (GLM)"],
+  "cover": "cover.png"
+}

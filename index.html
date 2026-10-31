@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Who Stole the Sun?</title>
+<meta name="description" content="Six towns, six missing miniature suns. A pocket detective notebook: read the exhibits, cross-check timelines, mark your board and name the culprit. EN/FR/ES.">
+<style>
+:root{
+  --paper:#f6efdc; --paper2:#efe4c8; --card:#fbf6e9; --ink:#33291f; --ink2:#7a6a52;
+  --red:#c8402e; --sun:#e8930c; --sun2:#f5b731; --line:#e3d5b6;
+  --acc:#f0d47a;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:"Avenir Next","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+  color:var(--ink); line-height:1.45;
+  background:
+    radial-gradient(1200px 500px at 85% -10%, #fdf7e2 0%, rgba(253,247,226,0) 60%),
+    repeating-linear-gradient(0deg, transparent 0 30px, rgba(131,106,68,.07) 30px 31px),
+    linear-gradient(180deg, var(--paper) 0%, var(--paper2) 100%);
+  min-height:100vh;
+}
+body::before{content:""; position:fixed; inset:0; pointer-events:none;
+  background:linear-gradient(90deg, transparent 0 26px, rgba(200,64,46,.16) 26px 28px, transparent 28px);}
+.wrap{max-width:980px; margin:0 auto; padding:14px 16px 90px; position:relative}
+button{font:inherit; color:inherit; cursor:pointer}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif; letter-spacing:.2px}
+/* ---- top bar ---- */
+.topbar{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;
+  max-width:980px; margin:0 auto; padding:12px 16px 4px}
+.brand{display:flex; align-items:center; gap:10px; background:none; border:none; padding:4px 6px; text-align:left}
+.brand-txt{font-family:Georgia,serif; font-weight:700; font-size:1.05rem; line-height:1.1}
+.brand-txt small{display:block; font-family:inherit; font-weight:400; color:var(--ink2); font-size:.72rem}
+.ctrl{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+.lang{display:flex; border:1.5px solid var(--ink); border-radius:8px; overflow:hidden}
+.lang-b{background:var(--card); border:none; padding:5px 10px; font-weight:700; font-size:.8rem}
+.lang-b.cur{background:var(--ink); color:var(--card)}
+.icon-b,.ghost-b{background:var(--card); border:1.5px dashed var(--ink2); border-radius:8px; padding:5px 10px}
+.ghost-b:hover,.icon-b:hover{border-color:var(--ink)}
+/* ---- home ---- */
+.hero{margin:18px 0 8px; text-align:center}
+.hero h1{font-size:clamp(1.15rem, 3.4vw, 1.7rem); margin:0; color:var(--ink)}
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; margin:14px 0}
+.case-card{position:relative; display:flex; flex-direction:column; gap:4px; text-align:left;
+  background:var(--card); border:1.5px solid var(--line); border-radius:12px; padding:38px 14px 14px;
+  box-shadow:2px 3px 0 rgba(51,41,31,.12); transition:transform .12s ease, box-shadow .12s ease}
+.case-card:hover{transform:translateY(-2px); box-shadow:3px 5px 0 rgba(51,41,31,.16)}
+.case-card.done{outline:2px solid var(--acc); outline-offset:-6px}
+.cc-band{position:absolute; top:0; left:0; right:0; height:26px; background:var(--acc); border-radius:10px 10px 0 0}
+.cc-num{font-size:.72rem; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink2)}
+.finale-b{background:var(--red); color:#fff; border-radius:6px; padding:0 6px; font-size:.66rem; letter-spacing:1px}
+.cc-title{font-family:Georgia,serif; font-size:1.18rem; font-weight:700}
+.cc-town{color:var(--ink2); font-size:.85rem; font-style:italic}
+.cc-foot{margin-top:6px; display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.cc-open{margin-left:auto; color:var(--red); font-weight:700; font-size:.9rem}
+.suns{letter-spacing:2px}
+.sun-dot{opacity:.22; font-size:.95rem}
+.sun-dot.on{opacity:1; filter:saturate(1.2)}
+.star{color:#d8cdb2; font-size:1.05rem}
+.star.on{color:var(--sun)}
+.mini-stamp{display:inline-block; border:2px solid var(--red); color:var(--red); border-radius:6px;
+  padding:0 7px; font-weight:800; font-size:.7rem; letter-spacing:1.5px; transform:rotate(-4deg); text-transform:uppercase}
+.mini-stamp.big{font-size:.95rem; padding:2px 10px}
+.all-done{text-align:center; font-weight:700; color:var(--red)}
+.credit{text-align:center; color:var(--ink2); font-size:.75rem; margin-top:26px}
+/* ---- method ---- */
+.sheet{background:var(--card); border:1.5px solid var(--line); border-radius:12px; padding:18px; margin-top:14px}
+.sheet p{font-size:.98rem}
+/* ---- case ---- */
+.case-head{margin-top:8px}
+.case-title h2{margin:2px 0; font-size:clamp(1.2rem,3.5vw,1.6rem)}
+.case-town{color:var(--ink2); font-size:.85rem}
+.case-intro{background:var(--card); border-left:4px solid var(--acc); border-radius:0 10px 10px 0;
+  padding:10px 12px; margin:10px 0 0; font-size:.95rem; box-shadow:1px 2px 0 rgba(51,41,31,.08)}
+.tries{color:var(--red); font-size:.82rem; margin:6px 0 0; font-weight:700}
+.tabbar{display:flex; gap:6px; overflow-x:auto; margin:14px 0 10px; padding-bottom:2px}
+.tab-b{flex:0 0 auto; background:var(--card); border:1.5px solid var(--line); border-radius:10px 10px 0 0;
+  padding:8px 13px; font-weight:700; font-size:.9rem; border-bottom:none; opacity:.75}
+.tab-b.cur{opacity:1; background:var(--card); border-color:var(--ink); border-bottom:2px solid var(--card);
+  position:relative; top:1.5px}
+.tab-body{background:var(--card); border:1.5px solid var(--ink); border-radius:0 12px 12px 12px; padding:14px; min-height:220px}
+.tab-h{margin:2px 0 10px; font-size:1.02rem}
+/* suspects */
+.cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px}
+.sus-card,.pl-card{background:#fffdf6; border:1.5px solid var(--line); border-radius:12px; padding:10px; text-align:center;
+  box-shadow:1px 2px 0 rgba(51,41,31,.08)}
+.sus-face{display:flex; justify-content:center}
+.sus-name{font-weight:800; margin-top:2px}
+.sus-role{color:var(--ink2); font-size:.78rem}
+.sus-note{font-size:.78rem; font-style:italic; color:var(--ink); opacity:.8; margin:4px 0 6px}
+.pl-pin{font-size:1.4rem}
+.sus-marks{display:flex; gap:4px; justify-content:center; flex-wrap:wrap}
+.mk{border:1.5px solid var(--ink2); background:var(--card); border-radius:8px; padding:2px 7px; font-size:.72rem; display:inline-flex; gap:3px; align-items:center}
+.mk.cell{padding:4px 9px; font-size:.95rem}
+.mk.cur[data-v="yes"]{background:#2f6b43; border-color:#2f6b43; color:#fff}
+.mk.cur[data-v="maybe"]{background:var(--sun); border-color:var(--sun); color:var(--ink)}
+.mk.cur[data-v="no"]{background:var(--red); border-color:var(--red); color:#fff}
+/* timeline */
+.tl{list-style:none; margin:0; padding:0 0 0 8px; border-left:2.5px dashed var(--ink2)}
+.tl-ev{position:relative; padding:4px 0 10px 18px}
+.tl-ev::before{content:""; position:absolute; left:-8px; top:10px; width:12px; height:12px; border-radius:50%;
+  background:var(--sun2); border:2.5px solid var(--ink)}
+.tl-t{font-weight:800; font-variant-numeric:tabular-nums; margin-right:8px; background:var(--paper2); border-radius:6px; padding:1px 7px; font-size:.85rem}
+.tl-x{font-size:.94rem}
+/* clues */
+.clues{display:grid; gap:10px}
+.clue{background:#fffdf6; border:1.5px solid var(--line); border-radius:10px; padding:10px 12px; transition:box-shadow .3s}
+.clue.flash{box-shadow:0 0 0 4px var(--sun2)}
+.clue-top{display:flex; justify-content:space-between; gap:8px; align-items:center; flex-wrap:wrap}
+.clue-no{font-weight:800; font-size:.8rem; letter-spacing:1px; text-transform:uppercase; color:var(--red)}
+.clue-type{font-size:.72rem; font-weight:800; letter-spacing:.5px; text-transform:uppercase; border-radius:6px; padding:1px 8px; color:#fff}
+.t-alibi .clue-type{background:#2f6b43}.t-testimony .clue-type{background:#3a7ca5}
+.t-object .clue-type{background:#b8860b}.t-report .clue-type{background:#5c6b7a}
+.t-claim .clue-type{background:#a05a2c}.t-info .clue-type{background:#8f2b6b}
+.clue-src{color:var(--ink2); font-size:.82rem; font-weight:700; margin-top:2px}
+.clue-txt{margin:6px 0 0; font-size:.95rem}
+/* board */
+.board-note{color:var(--ink2); font-size:.85rem; margin:4px 0 10px}
+.board{width:100%; border-collapse:collapse; font-size:.9rem}
+.board th{font-size:.72rem; text-transform:uppercase; letter-spacing:1px; color:var(--ink2); text-align:center}
+.board td{border-top:1.5px dashed var(--line); padding:6px 4px}
+.board-sep td{border-top:2px solid var(--ink); font-weight:800; letter-spacing:1px; text-transform:uppercase; font-size:.78rem; background:linear-gradient(90deg,var(--acc),transparent)}
+.bd-name small{display:block; color:var(--ink2); font-size:.72rem}
+.bd-cell{text-align:center}
+.bd-mini{display:inline-flex; vertical-align:middle}
+/* action bar */
+.actionbar{position:fixed; left:0; right:0; bottom:0; background:linear-gradient(180deg, rgba(246,239,220,0), var(--paper) 30%);
+  display:flex; gap:10px; justify-content:center; align-items:center; padding:14px 12px calc(12px + env(safe-area-inset-bottom)); z-index:20}
+.main-b{background:var(--red); color:#fff; border:2px solid #8f2b1e; border-radius:10px; padding:10px 20px; font-weight:800; box-shadow:2px 3px 0 rgba(51,41,31,.25)}
+.main-b:active{transform:translateY(1px)}
+.main-b:disabled{opacity:.45; cursor:not-allowed}
+/* modal */
+.veil{position:fixed; inset:0; background:rgba(51,41,31,.45); display:flex; align-items:flex-start; justify-content:center;
+  overflow:auto; padding:20px 12px; z-index:50}
+.modal{background:var(--card); border:2px solid var(--ink); border-radius:14px; max-width:640px; width:100%; padding:16px; box-shadow:4px 6px 0 rgba(51,41,31,.3); margin:auto}
+.modal h3{margin:0 0 8px}
+.m-sec{font-weight:800; margin:12px 0 6px; font-size:.9rem; letter-spacing:.4px}
+.picks{display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:6px}
+.pick-b{display:flex; align-items:center; gap:6px; background:#fffdf6; border:2px solid var(--line); border-radius:10px; padding:6px 8px; text-align:left}
+.pick-b small{display:block; color:var(--ink2); font-size:.7rem}
+.pick-b.wide{grid-column:span 1; font-size:.85rem}
+.pick-b.cur{border-color:var(--red); outline:2px solid var(--sun2)}
+.judge{background:#fff3d6; border:2px dashed var(--red); border-radius:10px; padding:10px; font-weight:700; margin:12px 0 0}
+.m-actions{display:flex; gap:10px; justify-content:flex-end; margin-top:14px; flex-wrap:wrap}
+.m-hint{color:var(--ink2); font-size:.8rem; margin:8px 0 0}
+.hints{padding-left:18px}
+.hint-li{margin:8px 0; background:#fffdf6; border-left:4px solid var(--sun); padding:8px 10px; border-radius:0 8px 8px 0}
+/* solution */
+.solution{margin-top:10px}
+.sol-head{display:flex; flex-wrap:wrap; align-items:center; gap:12px; justify-content:center; text-align:center}
+.sol-head h2{margin:0; font-size:clamp(1.1rem,3.2vw,1.5rem); width:100%}
+.stamp{border:3.5px double var(--red); color:var(--red); border-radius:8px; padding:4px 18px; font-weight:900;
+  letter-spacing:4px; font-size:1.1rem; transform:rotate(-6deg); text-transform:uppercase; background:rgba(255,253,246,.6)}
+.sol-grid{display:flex; gap:16px; align-items:center; justify-content:center; flex-wrap:wrap; margin:16px 0;
+  background:var(--card); border:1.5px solid var(--line); border-radius:12px; padding:14px}
+.sol-por{text-align:center}
+.sol-por b{display:block; font-size:1.1rem}
+.sol-por span{color:var(--ink2); font-size:.85rem}
+.sol-summary p{margin:4px 0}
+.steps{padding-left:20px}
+.steps li{margin:10px 0}
+.refs{display:inline-flex; gap:4px; flex-wrap:wrap; margin-left:4px}
+.refchip{border:1.5px solid var(--ink2); background:var(--paper2); border-radius:6px; font-size:.72rem; padding:1px 7px; font-weight:700}
+.refchip:hover{border-color:var(--red); color:var(--red)}
+.epi{background:var(--card); border-left:4px solid var(--sun); padding:10px 12px; border-radius:0 10px 10px 0; font-style:italic}
+@media (max-width:600px){
+  .wrap{padding:10px 10px 100px}
+  .picks{grid-template-columns:repeat(auto-fill,minmax(105px,1fr))}
+  .tab-b{padding:8px 10px; font-size:.82rem}
+  .board{font-size:.8rem}
+}
+@media (prefers-reduced-motion:reduce){ *{transition:none !important; animation:none !important} }
+</style>
+</head>
+<body>
+<header id="app-head"></header>
+<div id="app"></div>
+<noscript><p style="text-align:center;padding:20px">This game needs JavaScript. / Ce jeu nécessite JavaScript. / Este juego necesita JavaScript.</p></noscript>
+
+<script>
+/* Qui a volé le Soleil ? — données des 6 affaires.
+ * Couche formelle (langue-indépendante) :
+ *   clues[].excl  : suspects exclus par cet indice (rival du coupable)
+ *   clues[].exclP : lieux exclus comme scène du vol
+ *   solution      : { thief, place, clue }
+ * Invariants (vérifiés par les tests) :
+ *   I1 tout rival est exclu par ≥ 1 indice ; I2 le coupable n'est jamais exclu ;
+ *   I3 tout lieu non-solution est exclu ; I4 l'indice décisif exclut ≥ 1 rival
+ *   qu'aucun autre indice n'exclut (nécessaire) ; I5 la scène n'est jamais exclue. */
+"use strict";
+const CASES = [
+{
+  id: "case1", diff: 1, finale: false, town: "Brumarelle",
+  title: { en: "The Well Sun", fr: "Le soleil du puits", es: "El sol del pozo" },
+  intro: {
+    en: "A miniature sun warmed the well square of Brumarelle. This morning its little cradle hangs empty. Five neighbours were around. One of them took it.",
+    fr: "Un soleil miniature réchauffait la place du puits de Brumarelle. Ce matin, son petit berceau est vide. Cinq voisins étaient dans le coin. L'un d'eux l'a pris.",
+    es: "Un sol en miniatura calentaba la plaza del pozo de Brumarelle. Esta mañana su pequeña cuna está vacía. Cinco vecinos estaban cerca. Uno de ellos se lo llevó."
+  },
+  suspects: [
+    { id: "s1", name: "Odette", face: { skin: "#f2c9a0", shirt: "#e8a7b4", hair: "#8a5a33", hat: "chef", extra: "blush" },
+      role: { en: "The baker", fr: "La boulangère", es: "La panadera" },
+      note: { en: "Up before dawn, every day.", fr: "Debout avant l'aube, chaque jour.", es: "En pie antes del alba, cada día." } },
+    { id: "s2", name: "Firmin", face: { skin: "#eab68a", shirt: "#7fa8d9", hair: "#4a3626", hat: "cap", extra: "none" },
+      role: { en: "The postman", fr: "Le facteur", es: "El cartero" },
+      note: { en: "Knows every path around town.", fr: "Connaît tous les chemins du village.", es: "Conoce todos los caminos del pueblo." } },
+    { id: "s3", name: "Zéphirin", face: { skin: "#f2c9a0", shirt: "#a8c6b0", hair: "#9b9b9b", hat: "hood", extra: "none" },
+      role: { en: "The bell keeper", fr: "Le guetteur du clocher", es: "El vigilante del campanario" },
+      note: { en: "Claims he sees everything from up there.", fr: "Jure qu'il voit tout depuis là-haut.", es: "Jura que lo ve todo desde allá arriba." } },
+    { id: "s4", name: "Mélusine", face: { skin: "#eab68a", shirt: "#c9b8e0", hair: "#d87838", hat: "flower", extra: "glasses" },
+      role: { en: "The bookseller", fr: "La libraire", es: "La librera" },
+      note: { en: "Reads aloud every morning.", fr: "Lit à voix haute chaque matin.", es: "Lee en voz alta cada mañana." } },
+    { id: "s5", name: "Barbouille", face: { skin: "#f2c9a0", shirt: "#f0d47a", hair: "#5d3a1f", hat: "beret", extra: "paint" },
+      role: { en: "The painter", fr: "Le peintre", es: "El pintor" },
+      note: { en: "Repaints the kiosk every spring.", fr: "Repeint le kiosque chaque printemps.", es: "Repinta el quiosco cada primavera." } }
+  ],
+  places: [
+    { id: "p2", name: { en: "The bakery", fr: "La boulangerie", es: "La panadería" } },
+    { id: "p1", name: { en: "The well square", fr: "La place du puits", es: "La plaza del pozo" } },
+    { id: "p3", name: { en: "The bell tower", fr: "Le clocher", es: "El campanario" } },
+    { id: "p4", name: { en: "The library", fr: "La bibliothèque", es: "La biblioteca" } }
+  ],
+  timeline: [
+    { t: "06:30", txt: { en: "Odette lights the oven; its glow is seen from the square.", fr: "Odette allume le four ; sa lueur se voit depuis la place.", es: "Odette enciende el horno; su resplandor se ve desde la plaza." } },
+    { t: "07:00", txt: { en: "Zéphirin rings the morning bell. The little sun glitters above the well.", fr: "Zéphirin sonne le réveil. Le petit soleil scintille au-dessus du puits.", es: "Zéphirin toca la campana matinal. El solito brilla sobre el pozo." } },
+    { t: "08:10", txt: { en: "A ladder is raised against the well (seen from the tower).", fr: "Une échelle est dressée contre le puits (vue du clocher).", es: "Se apoya una escalera contra el pozo (vista desde el campanario)." } },
+    { t: "08:15", txt: { en: "A cloud covers the square for ten minutes.", fr: "Un nuage couvre la place pendant dix minutes.", es: "Una nube cubre la plaza durante diez minutos." } },
+    { t: "08:30", txt: { en: "Firmin comes back from the mill for his low-town round.", fr: "Firmin revient du moulin pour sa tournée basse-ville.", es: "Firmin vuelve del molino para su ronda del barrio bajo." } },
+    { t: "09:00", txt: { en: "Mélusine finds the cradle empty and raises the alarm.", fr: "Mélusine découvre le berceau vide et donne l'alerte.", es: "Mélusine descubre la cuna vacía y da la voz de alarma." } }
+  ],
+  clues: [
+    { id: "k1", type: "alibi", src: { en: "Odette, corroborated", fr: "Odette, corroborée", es: "Odette, corroborada" },
+      txt: { en: "“I never left the bakery between six and nine — the morning queue never leaves the oven.” Six customers confirm it.",
+             fr: "« Je n'ai pas quitté la boulangerie entre 6 h et 9 h : la file du matin ne quitte pas le four. » Six clients confirment.",
+             es: "«No salí de la panadería entre las seis y las nueve: la cola de la mañana no se aparta del horno.» Seis clientes lo confirman." },
+      excl: ["s1"], exclP: [] },
+    { id: "k2", type: "testimony", src: { en: "The miller", fr: "Le meunier", es: "El molinero" },
+      txt: { en: "“Firmin waited at the mill for his mail sack at 8 sharp; he only walked back down at 8:25.”",
+             fr: "« Firmin attendait son sac de lettres au moulin à 8 h pile ; il n'est redescendu qu'à 8 h 25. »",
+             es: "«Firmin esperaba su saco de cartas en el molino a las 8 en punto; no bajó hasta las 8:25.»" },
+      excl: ["s2"], exclP: [] },
+    { id: "k3", type: "report", src: { en: "Story hour record", fr: "Registre de l'heure du conte", es: "Registro de la hora del cuento" },
+      txt: { en: "Twelve children certify that Mélusine read aloud at the library from 8 to 9.",
+             fr: "Douze enfants certifient que Mélusine lisait à voix haute à la bibliothèque de 8 h à 9 h.",
+             es: "Doce niños certifican que Mélusine leía en voz alta en la biblioteca de 8 a 9." },
+      excl: ["s4"], exclP: [] },
+    { id: "k4", type: "claim", src: { en: "Zéphirin's statement", fr: "Déclaration de Zéphirin", es: "Declaración de Zéphirin" },
+      txt: { en: "“From the tower I saw a ladder raised against the well around 8:10. I thought someone was cleaning the rim.” No one corroborates the rest of his morning.",
+             fr: "« Du clocher, j'ai vu dresser une échelle contre le puits vers 8 h 10. J'ai cru à un nettoyage de la margelle. » Personne ne corrobore le reste de sa matinée.",
+             es: "«Desde el campanario vi cómo se apoyaba una escalera contra el pozo hacia las 8:10. Pensé que limpiaban el brocal.» Nadie corrobora el resto de su mañana." },
+      excl: [], exclP: ["p2", "p3", "p4"] },
+    { id: "k5", type: "report", src: { en: "Scene report", fr: "Constat de scène", es: "Informe de la escena" },
+      txt: { en: "The little sun's cradle, at the top of the well, is empty. The abandoned ladder bears paint drops that are still soft.",
+             fr: "Le berceau du petit soleil, au sommet du puits, est vide. L'échelle abandonnée porte des gouttes de peinture encore molles.",
+             es: "La cuna del solito, en lo alto del pozo, está vacía. La escalera abandonada tiene gotas de pintura aún blandas." },
+      excl: [], exclP: ["p2", "p3", "p4"] },
+    { id: "k6", type: "report", src: { en: "Weather note", fr: "Note du temps", es: "Nota del tiempo" },
+      txt: { en: "The 8:15–8:25 cloud was the only moment when the square could be seen from nowhere.",
+             fr: "Le nuage de 8 h 15 à 8 h 25 a été le seul moment où la place n'était visible de nulle part.",
+             es: "La nube de las 8:15 a las 8:25 fue el único momento en que la plaza no se veía desde ningún sitio." },
+      excl: [], exclP: [] },
+    { id: "k7", type: "object", src: { en: "Found on the square", fr: "Trouvé sur la place", es: "Hallado en la plaza" },
+      txt: { en: "A knocked-over paint pot stains the kiosk pavements, on the same square.",
+             fr: "Un pot de peinture renversé macule les pavés du kiosque, sur la même place.",
+             es: "Una olla de pintura volcada mancha los adoquines del quiosco, en la misma plaza." },
+      excl: [], exclP: [] },
+    { id: "k8", type: "info", src: { en: "Market inspector's note", fr: "Note de l'inspecteur du marché", es: "Nota del inspector del mercado" },
+      txt: { en: "Market log for that morning: only one stall had paint pots open — Barbouille's, repainting the kiosk since 7:30. The soft drops on the ladder can only come from his pots.",
+             fr: "Relevé du marché pour ce matin : un seul étal avait ouvert des pots de peinture — celui de Barbouille, qui repeignait le kiosque dès 7 h 30. Les gouttes molles de l'échelle ne peuvent venir que de ses pots.",
+             es: "Registro del mercado de esa mañana: solo un puesto tenía ollas de pintura abiertas, el de Barbouille, que repintaba el quiosco desde las 7:30. Las gotas blandas de la escalera solo pueden venir de sus ollas." },
+      excl: ["s1", "s2", "s3", "s4"], exclP: [] }
+  ],
+  solution: { thief: "s5", place: "p1", clue: "k8" },
+  hints: [
+    { en: "Start by clearing everyone whose alibi is confirmed by someone other than themselves.",
+      fr: "Commencez par écarter ceux dont l'alibi est confirmé par quelqu'un d'autre qu'eux-mêmes.",
+      es: "Empieza descartando a quienes su coartada la confirma alguien que no sean ellos mismos." },
+    { en: "Two suspects have no solid alibi. Look at what lay at the foot of the ladder.",
+      fr: "Deux suspects n'ont pas d'alibi solide. Regardez ce qui traînait au pied de l'échelle.",
+      es: "Dos sospechosos no tienen coartada firme. Mira lo que había al pie de la escalera." },
+    { en: "Only one townsfolk had opened paint pots that morning.",
+      fr: "Un seul habitant avait ouvert des pots de peinture ce matin-là.",
+      es: "Solo un vecino tenía ollas de pintura abiertas esa mañana." }
+  ],
+  explain: [
+    { refs: ["k1", "k2", "k3"], txt: { en: "Confirmed alibis clear Odette (Exhibit 1), Firmin (Exhibit 2) and Mélusine (Exhibit 3).",
+      fr: "Les alibis confirmés écartent Odette (Pièce 1), Firmin (Pièce 2) et Mélusine (Pièce 3).",
+      es: "Las coartadas confirmadas descartan a Odette (Pieza 1), Firmin (Pieza 2) y Mélusine (Pieza 3)." } },
+    { refs: ["k4", "k6"], txt: { en: "The theft happened at the well, under the cloud, between 8:15 and 8:25 (Exhibits 4 and 6).",
+      fr: "Le vol a eu lieu au puits, sous le nuage, entre 8 h 15 et 8 h 25 (Pièces 4 et 6).",
+      es: "El robo ocurrió en el pozo, bajo la nube, entre las 8:15 y las 8:25 (Piezas 4 y 6)." } },
+    { refs: ["k5"], txt: { en: "The thief left a ladder covered in fresh paint (Exhibit 5).",
+      fr: "Le voleur a laissé une échelle couverte de peinture fraîche (Pièce 5).",
+      es: "El ladrón dejó una escalera cubierta de pintura fresca (Pieza 5)." } },
+    { refs: ["k8"], txt: { en: "The market log shows only one stall had open paint pots that morning — Barbouille's. The fresh drops on the ladder can only come from his pots; and Zéphirin, the last suspect without a confirmed alibi, touched no pot either.",
+      fr: "Le relevé du marché montre qu'un seul étal avait des pots ouverts ce matin-là — celui de Barbouille. Les gouttes fraîches de l'échelle ne peuvent venir que de ses pots ; et Zéphirin, dernier suspect sans alibi confirmé, n'a touché aucun pot.",
+      es: "El registro del mercado muestra que solo un puesto tenía ollas abiertas esa mañana, el de Barbouille. Las gotas frescas de la escalera solo pueden venir de sus ollas; y Zéphirin, último sospechoso sin coartada confirmada, no tocó ninguna olla." } },
+    { refs: [], txt: { en: "Barbouille confesses: he wanted a warm light to dry his kiosk fresco faster.",
+      fr: "Barbouille avoue : il voulait une lumière chaude pour sécher sa fresque du kiosque plus vite.",
+      es: "Barbouille confiesa: quería una luz cálida para secar antes su fresco del quiosco." } }
+  ],
+  epilogue: { en: "The little sun returns to its cradle; Barbouille repaints the well rim as penance — his best work yet.",
+    fr: "Le petit soleil revient dans son berceau ; Barbouille repeint la margelle en pénitence — sa plus belle œuvre.",
+    es: "El solito vuelve a su cuna; Barbouille repinta el brocal como penitencia, su mejor obra." }
+},
+{
+  id: "case2", diff: 2, finale: false, town: "Pont-de-Lune",
+  title: { en: "The Bridge Lantern", fr: "La lanterne du pont", es: "El farol del puente" },
+  intro: {
+    en: "Every evening the sun-stone of Pont-de-Lune lights the old bridge. Tonight it never woke. The stone, its bronze base and thirty pounds of warmth are gone.",
+    fr: "Chaque soir, la pierre-soleil de Pont-de-Lune allume le vieux pont. Ce soir, elle ne s'est pas réveillée. La pierre, son socle de bronze et trente livres de chaleur ont disparu.",
+    es: "Cada tarde, la piedra-sol de Pont-de-Lune enciende el puente viejo. Hoy no despertó. La piedra, su base de bronce y treinta libras de calor han desaparecido."
+  },
+  suspects: [
+    { id: "s1", name: "Capucine", face: { skin: "#eab68a", shirt: "#7fb3c8", hair: "#3a2a1a", hat: "bandana", extra: "none" },
+      role: { en: "The boatwoman", fr: "La batelière", es: "La barquera" },
+      note: { en: "Rows the mail across the canal.", fr: "Rame le courrier à travers le canal.", es: "Rema el correo por el canal." } },
+    { id: "s2", name: "Barnabé", face: { skin: "#f2c9a0", shirt: "#8fb0d9", hair: "#6b6b6b", hat: "cap", extra: "beard" },
+      role: { en: "The fisherman", fr: "Le pêcheur", es: "El pescador" },
+      note: { en: "Mends his nets by lamplight.", fr: "Raccomode ses filets à la lampe.", es: "Remienda sus redes bajo la lámpara." } },
+    { id: "s3", name: "Toinette", face: { skin: "#eab68a", shirt: "#e0b089", hair: "#4a3626", hat: "bun", extra: "blush" },
+      role: { en: "The innkeeper", fr: "L'aubergiste", es: "La posadera" },
+      note: { en: "Serves the best onion soup.", fr: "Sert la meilleure soupe à l'oignon.", es: "Sirve la mejor sopa de cebolla." } },
+    { id: "s4", name: "Grégoire", face: { skin: "#f2c9a0", shirt: "#b5a8c9", hair: "#d8d8d8", hat: "none", extra: "glasses" },
+      role: { en: "The clockmaker", fr: "L'horloger", es: "El relojero" },
+      note: { en: "Keeps every clock in town on time.", fr: "Maintient toutes les horloges du village à l'heure.", es: "Mantiene a todos los relojes del pueblo en hora." } },
+    { id: "s5", name: "Nuage", face: { skin: "#f5f0e6", shirt: "#c9c9c9", hair: "#9b9b9b", hat: "none", extra: "cat" },
+      role: { en: "The bridge cat", fr: "Le chat du pont", es: "El gato del puente" },
+      note: { en: "Naps on the warmest stone.", fr: "Fait la sieste sur la pierre la plus chaude.", es: "Duerme la siesta en la piedra más cálida." } }
+  ],
+  places: [
+    { id: "p2", name: { en: "The inn", fr: "L'auberge", es: "La posada" } },
+    { id: "p4", name: { en: "The quay", fr: "Le quai", es: "El muelle" } },
+    { id: "p1", name: { en: "The bridge", fr: "Le pont", es: "El puente" } },
+    { id: "p3", name: { en: "The clock shop", fr: "L'horlogerie", es: "La relojería" } }
+  ],
+  timeline: [
+    { t: "18:00", txt: { en: "The sun-stone flares at dusk — automatic lighting.", fr: "La pierre-soleil s'embrase à la tombée du jour — allumage automatique.", es: "La piedra-sol se enciende al caer la tarde: encendido automático." } },
+    { t: "18:45", txt: { en: "Grégoire pulls the clock shop curtain down “for inventory”.", fr: "Grégoire baisse le rideau de l'horlogerie « pour inventaire ».", es: "Grégoire baja la cortina de la relojería «por inventario»." } },
+    { t: "19:30", txt: { en: "Toinette serves the cheese course; the dining room does not see her for a while.", fr: "Toinette sert le fromage ; la salle ne la revoit pas pendant un bon moment.", es: "Toinette sirve el queso; el comedor no la ve durante un buen rato." } },
+    { t: "19:50", txt: { en: "Neighbours hear the bridge railing creak.", fr: "Des riverains entendent le garde-corps du pont grincer.", es: "Unos vecinos oyen crujir la barandilla del puente." } },
+    { t: "19:54", txt: { en: "The creaking stops.", fr: "Le grincement cesse.", es: "El crujido cesa." } },
+    { t: "20:00", txt: { en: "The lantern never lights: the stone is gone.", fr: "La lanterne ne s'allume pas : la pierre a disparu.", es: "El farol no se enciende: la piedra ha desaparecido." } }
+  ],
+  clues: [
+    { id: "k1", type: "report", src: { en: "Lock register", fr: "Registre de l'écluse", es: "Registro de la esclusa" },
+      txt: { en: "Capucine's barge only docked at 19:40. The bridge is reached solely through the lock, manned without a break.",
+             fr: "La péniche de Capucine n'a accosté qu'à 19 h 40. On ne rejoint le pont que par l'écluse, gardée sans interruption.",
+             es: "La barcaza de Capucine atracó solo a las 19:40. Al puente solo se llega por la esclusa, vigilada sin descanso." },
+      excl: ["s1"], exclP: [] },
+    { id: "k2", type: "testimony", src: { en: "The lock keeper", fr: "L'éclusier", es: "El esclusero" },
+      txt: { en: "“Barnabé was mending nets under the quay lamp from seven to eight in the evening; I heard his needle click.” Scales still cover his bench.",
+             fr: "« Barnabé rapiéçait ses filets sous la lampe du quai de 19 h à 20 h ; j'entendais son aiguille claquer. » Des écailles couvrent encore son banc.",
+             es: "«Barnabé remendaba redes bajo la lámpara del muelle de 7 a 8; oía su aguja chocar.» Todavía cubren escamas su banco." },
+      excl: ["s2"], exclP: [] },
+    { id: "k3", type: "object", src: { en: "Base remains", fr: "Restes du socle", es: "Restos de la base" },
+      txt: { en: "The stone's base weighed thirty pounds and was held by four bolts: it took an iron bar and two hands.",
+             fr: "Le socle de la pierre pesait trente livres et était retenu par quatre boulons : il fallait une barre de fer et deux mains.",
+             es: "La base de la piedra pesaba treinta libras y estaba sujeta con cuatro pernos: hacía falta una barra de hierro y dos manos." },
+      excl: ["s5"], exclP: [] },
+    { id: "k4", type: "report", src: { en: "Street observation", fr: "Observation de la rue", es: "Observación de la calle" },
+      txt: { en: "The clock shop curtain stayed down from 6:45 to 8:30 “for inventory” — its first closing ever on a market evening.",
+             fr: "Le rideau de l'horlogerie est resté baissé de 18 h 45 à 20 h 30 « pour inventaire » — sa première fermeture un soir de marché.",
+             es: "La cortina de la relojería quedó bajada de 18:45 a 20:30 «por inventario»: su primer cierre en una tarde de mercado." },
+      excl: [], exclP: [] },
+    { id: "k5", type: "report", src: { en: "Timing of the theft", fr: "Datation du vol", es: "Datación del robo" },
+      txt: { en: "The railing creak (7:50–7:54 pm) dates the theft: the railing is the only access to the stone's slot.",
+             fr: "Le grincement du garde-corps (19 h 50 – 19 h 54) date le vol : le garde-corps est le seul accès au logement de la pierre.",
+             es: "El crujido de la barandilla (19:50–19:54) fecha el robo: la barandilla es el único acceso a la hornacina de la piedra." },
+      excl: [], exclP: ["p2", "p3", "p4"] },
+    { id: "k6", type: "object", src: { en: "Found on the railing", fr: "Trouvé sur le garde-corps", es: "Hallado en la barandilla" },
+      txt: { en: "A tear-scratch marks the railing; under the emptied slot, oil drops smelling strongly of clove.",
+             fr: "Une rayure d'arrachement barre le garde-corps ; sous le logement vidé, des gouttes d'huile au fort parfum de girofle.",
+             es: "Un arañazo de arranque cruza la barandilla; bajo la hornacina vacía, gotas de aceite con fuerte olor a clavo." },
+      excl: [], exclP: ["p2", "p3", "p4"] },
+    { id: "k7", type: "claim", src: { en: "Toinette's statement", fr: "Déclaration de Toinette", es: "Declaración de Toinette" },
+      txt: { en: "“I was in my dining room! Well… I was checking the storeroom from 7:30 to 7:55.” Nobody met her there.",
+             fr: "« J'étais dans ma salle ! Enfin… je vérifiais les réserves de 19 h 30 à 19 h 55. » Personne ne l'y a croisée.",
+             es: "«¡Estaba en mi comedor! Bueno… revisaba la bodega de 7:30 a 7:55.» Nadie la vio allí." },
+      excl: [], exclP: [] },
+    { id: "k8", type: "info", src: { en: "Clockmaker's guild file", fr: "Dossier de la guilde des horlogers", es: "Expediente del gremio de relojeros" },
+      txt: { en: "The stone's slot was locked by a spring lock tuned by the clockmaker himself: opening it without breaking the stone required the mechanism's secret. The clove-scented oil is the very one he distills for his gearworks.",
+             fr: "Le logement de la pierre était verrouillé par une serrure à ressort réglée par l'horloger lui-même : l'ouvrir sans briser la pierre exigeait le secret du mécanisme. L'huile parfumée à la girofle est celle qu'il distille lui-même pour ses engrenages.",
+             es: "La hornacina de la piedra estaba cerrada con un cerradero de resorte ajustado por el propio relojero: abrirla sin romper la piedra exigía el secreto del mecanismo. El aceite con olor a clavo es el que él mismo destila para sus engranajes." },
+      excl: ["s1", "s2", "s3", "s5"], exclP: [] }
+  ],
+  solution: { thief: "s4", place: "p1", clue: "k8" },
+  hints: [
+    { en: "A statement about yourself proves nothing: look for what others saw or signed.",
+      fr: "Une déclaration sur soi-même ne prouve rien : cherchez ce que d'autres ont vu ou signé.",
+      es: "Una declaración sobre uno mismo no prueba nada: busca lo que otros vieron o firmaron." },
+    { en: "The theft lasted four minutes, on the bridge itself. Who knew the slot's spring lock?",
+      fr: "Le vol a duré quatre minutes, sur le pont même. Qui connaissait la serrure à ressort du logement ?",
+      es: "El robo duró cuatro minutos, en el propio puente. ¿Quién conocía el cerradero de resorte de la hornacina?" },
+    { en: "Two clues answer each other: the tear-scratch on the railing and the scent of the oil drops.",
+      fr: "Deux indices se répondent : la rayure du garde-corps et le parfum des gouttes d'huile.",
+      es: "Dos pistas se responden: el arañazo de la barandilla y el olor de las gotas de aceite." }
+  ],
+  explain: [
+    { refs: ["k1", "k2"], txt: { en: "The lock register clears Capucine (docked too late, Exhibit 1); the lock keeper's account and the fish scales clear Barnabé (Exhibit 2).",
+      fr: "Le registre de l'écluse écarte Capucine (accostée trop tard, Pièce 1) ; le récit de l'éclusier et les écailles écartent Barnabé (Pièce 2).",
+      es: "El registro de la esclusa descarta a Capucine (atracó demasiado tarde, Pieza 1); el relato del esclusero y las escamas descartan a Barnabé (Pieza 2)." } },
+    { refs: ["k3"], txt: { en: "Thirty pounds, four bolts, an iron bar: not a job for the bridge cat (Exhibit 3).",
+      fr: "Trente livres, quatre boulons, une barre de fer : pas un travail pour le chat du pont (Pièce 3).",
+      es: "Treinta libras, cuatro pernos, una barra de hierro: no es trabajo para el gato del puente (Pieza 3)." } },
+    { refs: ["k5", "k7"], txt: { en: "The stone was lifted between 7:50 and 7:54 on the bridge. Toinette has no alibi for exactly that slot (Exhibit 7) — she is the last plausible rival.",
+      fr: "La pierre a été soulevée entre 19 h 50 et 19 h 54 sur le pont. Toinette n'a pas d'alibi pour ce créneau exact (Pièce 7) — elle est la dernière rivale plausible.",
+      es: "La piedra se alzó entre las 19:50 y las 19:54 en el puente. Toinette no tiene coartada para ese intervalo exacto (Pieza 7): es la última rival plausible." } },
+    { refs: ["k8", "k6"], txt: { en: "But the slot's spring lock was the clockmaker's secret, and the clove oil under the slot is his own blend (Exhibits 8 and 6). Toinette knew neither the lock nor the oil.",
+      fr: "Mais la serrure à ressort du logement était le secret de l'horloger, et l'huile de girofle sous le logement est son mélange maison (Pièces 8 et 6). Toinette ne connaissait ni la serrure ni l'huile.",
+      es: "Pero el cerradero de resorte era secreto del relojero, y el aceite de clavo bajo la hornacina es su mezcla propia (Piezas 8 y 6). Toinette no conocía ni el cerradero ni el aceite." } },
+    { refs: ["k4"], txt: { en: "The “inventory” closing covered his tracks — the first ever on a market evening (Exhibit 4).",
+      fr: "La fermeture « pour inventaire » couvrait ses traces — la première un soir de marché (Pièce 4).",
+      es: "El cierre «por inventario» cubría sus huellas: el primero en una tarde de mercado (Pieza 4)." } },
+    { refs: [], txt: { en: "Grégoire confesses: his workshop froze every night; the warm stone would keep his pendulums alive until spring.",
+      fr: "Grégoire avoue : son atelier gelait chaque nuit ; la pierre chaude maintiendrait ses balanciers en vie jusqu'au printemps.",
+      es: "Grégoire confiesa: su taller se helaba cada noche; la piedra cálida mantendría sus péndulos con vida hasta la primavera." } }
+  ],
+  epilogue: { en: "The stone comes back at dawn. The town entrusts Grégoire with the care of every lantern — warmth shared is warmth doubled.",
+    fr: "La pierre revient à l'aube. La ville confie à Grégoire l'entretien de toutes les lanternes — la chaleur partagée est une chaleur doublée.",
+    es: "La piedra vuelve al alba. El pueblo encarga a Grégoire el cuidado de todos los faroles: el calor compartido es calor duplicado." }
+},
+{
+  id: "case3", diff: 3, finale: false, town: "Saline-sur-Mer",
+  title: { en: "The Lighthouse Spark", fr: "L'étincelle du phare", es: "La chispa del faro" },
+  intro: {
+    en: "The lighthouse of Saline-sur-Mer is lit by a captive spark that crackles in its lantern room. During ten minutes of fog, it went missing. Five people were out that evening.",
+    fr: "Le phare de Saline-sur-Mer est allumé par une étincelle captive qui crépite dans sa chambre de lanterne. Pendant dix minutes de brume, elle a disparu. Cinq personnes étaient dehors ce soir-là.",
+    es: "El faro de Saline-sur-Mer se enciende con una chispa cautiva que crepita en su sala de linterna. Durante diez minutos de niebla, desapareció. Cinco personas estaban fuera esa tarde."
+  },
+  suspects: [
+    { id: "s1", name: "Irène", face: { skin: "#eab68a", shirt: "#d9c289", hair: "#3a2a1a", hat: "bandana", extra: "none" },
+      role: { en: "The lighthouse keeper", fr: "La gardienne du phare", es: "La farera" },
+      note: { en: "Barefoot inside her tower, always.", fr: "Pieds nus dans sa tour, toujours.", es: "Descalza en su torre, siempre." } },
+    { id: "s2", name: "Marcel", face: { skin: "#f2c9a0", shirt: "#e8e0c9", hair: "#6b6b6b", hat: "cap", extra: "none" },
+      role: { en: "The salt merchant", fr: "Le marchand de sel", es: "El mercader de sal" },
+      note: { en: "Weighs sacks from dawn to dusk.", fr: "Pèse des sacs de l'aube au crépuscule.", es: "Pesa sacos del alba al ocaso." } },
+    { id: "s3", name: "Yvonne", face: { skin: "#eab68a", shirt: "#a8c6b0", hair: "#d8d8d8", hat: "sailor", extra: "none" },
+      role: { en: "The retired captain", fr: "La capitaine à la retraite", es: "La capitana retirada" },
+      note: { en: "Tells the sea's moods from her balcony.", fr: "Lit l'humeur de la mer depuis son balcon.", es: "Lee el humor del mar desde su balcón." } },
+    { id: "s4", name: "Pia", face: { skin: "#f2c9a0", shirt: "#f0a8a0", hair: "#5d3a1f", hat: "pigtails", extra: "blush" },
+      role: { en: "The kite girl", fr: "La fillette aux cerfs-volants", es: "La niña de las cometas" },
+      note: { en: "Flies kites in any weather.", fr: "Fait voler des cerfs-volants par tous les temps.", es: "Vuela cometas con cualquier tiempo." } },
+    { id: "s5", name: "Aurélie", face: { skin: "#eab68a", shirt: "#f0d47a", hair: "#8a5a33", hat: "flower", extra: "necklace" },
+      role: { en: "The amber collector", fr: "La collectionneuse d'ambre", es: "La coleccionista de ámbar" },
+      note: { en: "Polishes amber by her shop window.", fr: "Polit l'ambre devant sa vitrine.", es: "Pule ámbar en su escaparate." } }
+  ],
+  places: [
+    { id: "p4", name: { en: "The bramble dune", fr: "La dune aux ronces", es: "La duna de las zarzas" } },
+    { id: "p1", name: { en: "The lantern room", fr: "La chambre de lanterne", es: "La sala de linterna" } },
+    { id: "p2", name: { en: "The salt warehouse", fr: "La salorge", es: "La salazona" } },
+    { id: "p3", name: { en: "The beach", fr: "La plage", es: "La playa" } }
+  ],
+  timeline: [
+    { t: "18:55", txt: { en: "Irène trims the wick; the spark crackles in its lantern (seen by the pilot boat).", fr: "Irène mèche le lumignon ; l'étincelle crépite dans sa lanterne (vue par le bateau-pilote).", es: "Irène ajusta el pabilo; la chispa crepita en su linterna (vista por el barco piloto)." } },
+    { t: "19:00", txt: { en: "Fog falls; the horn sounds every ten minutes.", fr: "La brume tombe ; la corne sonne toutes les dix minutes.", es: "Cae la niebla; la bocina suena cada diez minutos." } },
+    { t: "19:05", txt: { en: "Pia's kite crashes into the brambles of the dune.", fr: "Le cerf-volant de Pia s'écrase dans les ronces de la dune.", es: "La cometa de Pia se estrella en las zarzas de la duna." } },
+    { t: "19:25", txt: { en: "The fog lifts: the pilot boat reports a dark lantern.", fr: "La brume se lève : le bateau-pilote relève une lanterne éteinte.", es: "La niebla se levanta: el barco piloto informa de una linterna apagada." } },
+    { t: "19:40", txt: { en: "Last salt weighing of the day, sealed.", fr: "Dernière pesée de sel de la journée, scellée.", es: "Última pesada de sal del día, sellada." } },
+    { t: "20:00", txt: { en: "Irène climbs back up: the spark is gone.", fr: "Irène remonte : l'étincelle a disparu.", es: "Irène sube de nuevo: la chispa ha desaparecido." } }
+  ],
+  clues: [
+    { id: "k1", type: "report", src: { en: "Lighthouse logbook", fr: "Journal de bord du phare", es: "Diario de a bordo del faro" },
+      txt: { en: "From 7 to 8 pm, Irène sounded, logged and tuned the fog horn every ten minutes, countersigned by the pilot boat.",
+             fr: "De 19 h à 20 h, Irène a sonné, noté et réglé la corne de brume toutes les dix minutes, contresignée par le bateau-pilote.",
+             es: "De 19 a 20, Irène tocó, anotó y ajustó la bocina de niebla cada diez minutos, refrendada por el barco piloto." },
+      excl: ["s1"], exclP: [] },
+    { id: "k2", type: "report", src: { en: "Scale ticket & sack register", fr: "Papier de la balance et registre des sacs", es: "Boleto de la báscula y registro de sacos" },
+      txt: { en: "Marcel's last weighing is sealed at 7:40 pm; a continuous queue of customers held him at the warehouse from 6:40 to 7:40.",
+             fr: "La dernière pesée de Marcel est scellée à 19 h 40 ; une file ininterrompue de clients l'a retenu à la salorge de 18 h 40 à 19 h 40.",
+             es: "La última pesada de Marcel queda sellada a las 19:40; una cola continua de clientes lo retuvo en la salazona de 18:40 a 19:40." },
+      excl: ["s2"], exclP: [] },
+    { id: "k3", type: "testimony", src: { en: "Two fishermen", fr: "Deux pêcheurs", es: "Dos pescadores" },
+      txt: { en: "“Pia fought the brambles for her kite for a whole hour; we passed her a lamp.”",
+             fr: "« Pia a combattu les ronces pour son cerf-volant pendant une heure entière ; nous lui avons passé une lampe. »",
+             es: "«Pia luchó contra las zarzas por su cometa durante una hora entera; le pasamos una lámpara.»" },
+      excl: ["s4"], exclP: [] },
+    { id: "k4", type: "report", src: { en: "Scene report", fr: "Constat de scène", es: "Informe de la escena" },
+      txt: { en: "The spark rested in the lantern room at the top of the tower: its mount is empty and the glass pane untouched.",
+             fr: "L'étincelle reposait dans la chambre de lanterne, au sommet : son support est vide et la vitre n'a pas été touchée.",
+             es: "La chispa descansaba en la sala de linterna, en lo alto: su soporte está vacío y el cristal no fue tocado." },
+      excl: [], exclP: ["p2", "p3", "p4"] },
+    { id: "k5", type: "object", src: { en: "Found on the stair nut", fr: "Trouvé sur l'écrou de l'échelle", es: "Hallado en la tuerca de la escalera" },
+      txt: { en: "On the spiral stair's handrail nut: chips of polish and grains of polished amber.",
+             fr: "Sur l'écrou de la rampe de l'escalier en vis : des éclats de vernis et des grains d'ambre poli.",
+             es: "En la tuerca de la barandilla de la escalera de caracol: astillas de barniz y granos de ámbar pulido." },
+      excl: [], exclP: [] },
+    { id: "k6", type: "report", src: { en: "Footprint cast", fr: "Moulage des empreintes", es: "Molde de las huellas" },
+      txt: { en: "Prints on the spiral steps: hobnailed boots, wide heel, size 44, sole stamped with an anchor.",
+             fr: "Empreintes sur les marches de la vis : bottes à clous, talon large, pointure 44, semelle marquée d'une ancre.",
+             es: "Huellas en los peldaños de caracol: botas claveteadas, tacón ancho, talla 44, suela marcada con un ancla." },
+      excl: [], exclP: [] },
+    { id: "k7", type: "info", src: { en: "Cobbler's register", fr: "Registre du cordonnier", es: "Registro del zapatero" },
+      txt: { en: "Only two people in Saline wear anchor-stamped hobnailed boots: Marcel and Aurélie. Irène walks barefoot in her tower, Yvonne wears espadrilles only (infirmary file: crushed toes long ago), Pia takes a size 32.",
+             fr: "Deux personnes seulement portent à Saline des bottes à clous marquées d'une ancre : Marcel et Aurélie. Irène marche pieds nus dans sa tour, Yvonne ne porte que des espadrilles (dossier de l'infirmerie : orteils broyés jadis), Pia chausse du 32.",
+             es: "Solo dos personas en Saline llevan botas claveteadas con ancla: Marcel y Aurélie. Irène camina descalza en su torre, Yvonne solo lleva alpargatas (expediente de la enfermería: dedos machacados hace tiempo), Pia calza un 32." },
+      excl: ["s1", "s3", "s4"], exclP: [] },
+    { id: "k8", type: "claim", src: { en: "Yvonne's statement", fr: "Déclaration d'Yvonne", es: "Declaración de Yvonne" },
+      txt: { en: "“From my balcony I saw a pink glow climb down the cliff at 7:15.” There is no path down that cliff — the glow was fog reflecting the sunset.",
+             fr: "« De mon balcon, j'ai vu une lueur rose descendre la falaise à 19 h 15. » Il n'y a aucun chemin par cette falaise — la lueur était un reflet de brume au couchant.",
+             es: "«Desde mi balcón vi un resplandor rosado bajar por el acantilado a las 19:15.» No hay camino por ese acantilado: el resplandor era la niebla reflejando el ocaso." },
+      excl: [], exclP: [] },
+    { id: "k9", type: "claim", src: { en: "Aurélie's statement", fr: "Déclaration d'Aurélie", es: "Declaración de Aurélie" },
+      txt: { en: "“I was varnishing my amber window display all evening.” She was alone in her shop.",
+             fr: "« Je vernissais ma vitrine d'ambre toute la soirée. » Elle était seule dans sa boutique.",
+             es: "«Estuve barnizando mi escaparate de ámbar toda la tarde.» Estaba sola en su tienda." },
+      excl: [], exclP: [] }
+  ],
+  solution: { thief: "s5", place: "p1", clue: "k7" },
+  hints: [
+    { en: "Cross-check every alibi against a paper trail: logbook, scale ticket, register.",
+      fr: "Recoupez chaque alibi avec un écrit : journal de bord, papier de balance, registre.",
+      es: "Cruza cada coartada con un documento: diario de a bordo, boleto de báscula, registro." },
+    { en: "The spiral steps speak: match the footprints to what everyone wears.",
+      fr: "Les marches de la vis parlent : associez les empreintes à ce que chacun porte.",
+      es: "Los peldaños de caracol hablan: relaciona las huellas con el calzado de cada cual." },
+    { en: "Two pairs of boots carry the anchor; one of the two could not leave the scale.",
+      fr: "Deux paires de bottes portent l'ancre ; l'une des deux ne pouvait pas quitter la balance.",
+      es: "Dos pares de botas llevan el ancla; uno de los dos no podía apartarse de la báscula." }
+  ],
+  explain: [
+    { refs: ["k1", "k2", "k3"], txt: { en: "Papers and witnesses clear Irène (Exhibit 1), Marcel (Exhibit 2) and Pia (Exhibit 3).",
+      fr: "Les écrits et les témoins écartent Irène (Pièce 1), Marcel (Pièce 2) et Pia (Pièce 3).",
+      es: "Los papeles y los testigos descartan a Irène (Pieza 1), Marcel (Pieza 2) y Pia (Pieza 3)." } },
+    { refs: ["k4"], txt: { en: "The scene is the lantern room: empty mount, untouched glass (Exhibit 4).",
+      fr: "La scène est la chambre de lanterne : support vide, vitre intacte (Pièce 4).",
+      es: "La escena es la sala de linterna: soporte vacío, cristal intacto (Pieza 4)." } },
+    { refs: ["k6", "k7"], txt: { en: "Size-44 anchor-stamped hobnails fit only Marcel or Aurélie (Exhibits 6–7) — and Marcel was nailed to his scale by an unbroken queue (Exhibit 2).",
+      fr: "Les clous à ancre en 44 ne vont qu'à Marcel ou Aurélie (Pièces 6-7) — et Marcel était cloué à sa balance par une file sans interruption (Pièce 2).",
+      es: "Los clavos con ancla en talla 44 solo calzan a Marcel o Aurélie (Piezas 6-7), y Marcel estaba clavado a su báscula por una cola ininterrumpida (Pieza 2)." } },
+    { refs: ["k5"], txt: { en: "Polish chips and amber grains on the stair nut corroborate the amber collector (Exhibit 5).",
+      fr: "Les éclats de vernis et grains d'ambre sur l'écrou de la rampe corroborent la collectionneuse d'ambre (Pièce 5).",
+      es: "Las astillas de barniz y los granos de ámbar en la tuerca corroboran a la coleccionista de ámbar (Pieza 5)." } },
+    { refs: ["k9", "k8"], txt: { en: "Her evening-alone story proves nothing, and Yvonne's “pink glow” was fog, not a clue (Exhibits 9 and 8).",
+      fr: "Son récit de soirée seule ne prouve rien, et la « lueur rose » d'Yvonne était de la brume, pas un indice (Pièces 9 et 8).",
+      es: "Su relato de una tarde sola no prueba nada, y el «resplandor rosado» de Yvonne era niebla, no una pista (Piezas 9 y 8)." } },
+    { refs: [], txt: { en: "Aurélie confesses: under the spark's light her amber glows like honey. She wanted one starry window.",
+      fr: "Aurélie avoue : sous la lumière de l'étincelle, son ambre luit comme du miel. Elle voulait une vitrine étoilée.",
+      es: "Aurélie confiesa: bajo la luz de la chispa su ámbar brilla como la miel. Quería un escaparate estrellado." } }
+  ],
+  epilogue: { en: "The spark returns to its lantern. Aurélie gets a small glass roof over her window instead — the town's gift, and her favourite star.",
+    fr: "L'étincelle revient dans sa lanterne. Aurélie reçoit un petit dôme de verre au-dessus de sa vitrine — le cadeau de la ville, et son étoile préférée.",
+    es: "La chispa vuelve a su linterna. Aurélie recibe una pequeña cúpula de cristal sobre su escaparate: el regalo del pueblo y su estrella favorita." }
+},
+{
+  id: "case4", diff: 4, finale: false, town: "Verger-Tendre",
+  title: { en: "The Greenhouse Ray", fr: "Le rayon de la serre", es: "El rayo del invernadero" },
+  intro: {
+    en: "In Verger-Tendre, a ray-crystal focuses the sun through the greenhouse roof to ripen the peaches. Between the last rain and dawn, it vanished. Five early risers — or night owls — could have done it.",
+    fr: "À Verger-Tendre, un rayon-cristal concentre le soleil à travers le toit de la serre pour mûrir les pêches. Entre la dernière pluie et l'aube, il a disparu. Cinq lève-tôt — ou couche-tard — ont pu le faire.",
+    es: "En Verger-Tendre, un cristal-rayo concentra el sol a través del techo del invernadero para madurar los melocotones. Entre la última lluvia y el alba, desapareció. Cinco madrugadores —o trasnochadores— pudieron hacerlo."
+  },
+  suspects: [
+    { id: "s1", name: "Rose", face: { skin: "#eab68a", shirt: "#a8c6b0", hair: "#b5502f", hat: "boater", extra: "blush" },
+      role: { en: "The gardener", fr: "La jardinière", es: "La jardinera" },
+      note: { en: "Felt slippers inside the greenhouse, always.", fr: "Chaussons de feutre dans la serre, toujours.", es: "Zapatillas de fieltro en el invernadero, siempre." } },
+    { id: "s2", name: "Apolline", face: { skin: "#f2c9a0", shirt: "#f0d47a", hair: "#4a3626", hat: "veil", extra: "none" },
+      role: { en: "The beekeeper", fr: "L'apicultrice", es: "La apicultora" },
+      note: { en: "Her bees wake with the sun.", fr: "Ses abeilles se réveillent avec le soleil.", es: "Sus abejas despiertan con el sol." } },
+    { id: "s3", name: "Sylvain", face: { skin: "#eab68a", shirt: "#c99a6b", hair: "#5d3a1f", hat: "cap", extra: "beard" },
+      role: { en: "The carpenter", fr: "Le menuisier", es: "El carpintero" },
+      note: { en: "Smells of hide glue and shavings.", fr: "Sent la colle de peau et les copeaux.", es: "Huele a cola de piel y virutas." } },
+    { id: "s4", name: "Vivienne", face: { skin: "#f2c9a0", shirt: "#7fb3c8", hair: "#2a2a2a", hat: "none", extra: "glasses" },
+      role: { en: "The weather watcher", fr: "La météorologue", es: "La meteoróloga" },
+      note: { en: "Her machines hum even when she sleeps.", fr: "Ses machines bourdonnent même quand elle dort.", es: "Sus máquinas zumban incluso cuando duerme." } },
+    { id: "s5", name: "Célestin", face: { skin: "#eab68a", shirt: "#e8a7b4", hair: "#d8d8d8", hat: "none", extra: "bowtie" },
+      role: { en: "The storyteller", fr: "Le conteur", es: "El cuentacuentos" },
+      note: { en: "Sleeps in a hammock on the square.", fr: "Dort dans un hamac sur la place.", es: "Duerme en una hamaca en la plaza." } }
+  ],
+  places: [
+    { id: "p3", name: { en: "The workshop", fr: "L'atelier", es: "El taller" } },
+    { id: "p2", name: { en: "The apiary", fr: "Le rucher", es: "El colmenar" } },
+    { id: "p4", name: { en: "The weather post", fr: "Le poste météo", es: "El puesto meteorológico" } },
+    { id: "p1", name: { en: "The greenhouse", fr: "La serre", es: "El invernadero" } }
+  ],
+  timeline: [
+    { t: "03:00", txt: { en: "The rain stops.", fr: "La pluie s'arrête.", es: "La lluvia cesa." } },
+    { t: "04:00", txt: { en: "The greenhouse ladder is set dry against the frame (after the rain).", fr: "L'échelle de la serre est posée sèche contre l'arceau (après la pluie).", es: "La escalera del invernadero se apoya seca contra el arco (tras la lluvia)." } },
+    { t: "05:00", txt: { en: "Vivienne's probe balloon lifts off, released by her automat.", fr: "Le ballon-sonde de Vivienne s'envole, libéré par son automate.", es: "El globo sonda de Vivienne despega, liberado por su autómata." } },
+    { t: "05:10", txt: { en: "The greenhouse journal notes a watering “by Rose's hand”.", fr: "Le journal de serre note un arrosage « de la main de Rose ».", es: "El diario del invernadero anota un riego «de mano de Rose»." } },
+    { t: "06:00", txt: { en: "Daylight reveals the ray-crystal's cradle empty.", fr: "Le jour découvre le berceau du rayon-cristal vide.", es: "La luz del día descubre la cuna del cristal-rayo vacía." } }
+  ],
+  clues: [
+    { id: "k1", type: "report", src: { en: "Dew report", fr: "Rapport de rosée", es: "Informe de rocío" },
+      txt: { en: "The rain wet everything except the greenhouse ladder: it was set after the rain ended (3 am) and removed before daylight.",
+             fr: "La pluie a tout mouillé, sauf l'échelle de la serre : elle a été posée après la fin de la pluie (3 h) et retirée avant le jour.",
+             es: "La lluvia mojó todo excepto la escalera del invernadero: se apoyó tras el fin de la lluvia (3:00) y se retiró antes del alba." },
+      excl: [], exclP: [] },
+    { id: "k2", type: "testimony", src: { en: "The baker", fr: "Le boulanger", es: "El panadero" },
+      txt: { en: "“Between turns of dough, from 4 to 6, I saw Célestin snore in his hammock under my window — I tucked the blanket at dawn myself.”",
+             fr: "« Entre deux tours de pétrin, de 4 h à 6 h, j'ai vu Célestin ronfler dans son hamac sous ma fenêtre — j'ai bordé la couverture à l'aube moi-même. »",
+             es: "«Entre amasados, de 4 a 6, vi a Célestin roncar en su hamaca bajo mi ventana; yo mismo le arreglé la manta al alba.»" },
+      excl: ["s5"], exclP: [] },
+    { id: "k3", type: "report", src: { en: "Road surveyor's sheet", fr: "Feuille du cantonnier", es: "Hoja del caminero" },
+      txt: { en: "At 4:45 the surveyor met Apolline's cart full of honey crates at the mill bridge, returning from the flower market (route sheet signed).",
+             fr: "À 4 h 45, le cantonnier a croisé la carriole d'Apolline chargée de caisses de miel au pont du moulin, au retour du marché aux fleurs (feuille de route signée).",
+             es: "A las 4:45, el caminero se cruzó con la carreta de Apolline cargada de cajas de miel en el puente del molino, de vuelta del mercado de flores (hoja de ruta firmada)." },
+      excl: ["s2"], exclP: [] },
+    { id: "k4", type: "report", src: { en: "Neighbour's account", fr: "Récit du voisin", es: "Relato del vecino" },
+      txt: { en: "Minet, the greenhouse cat, purrs for Rose only; she purred against Rose's house door from 4 am until dawn (the insomniac neighbour heard her).",
+             fr: "Minet, la chatte de serre, ne ronronne que pour Rose ; elle a ronronné contre la porte de la maison de Rose de 4 h à l'aube (le voisin insomniaque l'a entendue).",
+             es: "Minet, la gata del invernadero, solo ronronea para Rose; ronroneó contra la puerta de la casa de Rose de 4:00 al alba (la oyó el vecino insomne)." },
+      excl: ["s1"], exclP: [] },
+    { id: "k5", type: "report", src: { en: "Weather post log", fr: "Journal du poste météo", es: "Diario del puesto meteorológico" },
+      txt: { en: "The probe balloon lifts at 5:00 sharp through the automat Vivienne built herself: her presence at the weather post is not required.",
+             fr: "Le ballon-sonde s'envole à 5 h précises par l'automate que Vivienne a construit elle-même : sa présence au poste météo n'est pas requise.",
+             es: "El globo sonda despega a las 5:00 en punto mediante el autómata que Vivienne construyó: su presencia en el puesto no es necesaria." },
+      excl: [], exclP: [] },
+    { id: "k6", type: "object", src: { en: "Cradle splinters", fr: "Éclats du berceau", es: "Astillas de la cuna" },
+      txt: { en: "Fresh oak splinters in the crystal's cradle: it was chiselled out, not unscrewed.",
+             fr: "Éclats de chêne frais dans le berceau du cristal : il a été dégagé au ciseau, pas dévissé.",
+             es: "Astillas de roble fresco en la cuna del cristal: se sacó a formón, no se desatornilló." },
+      excl: [], exclP: [] },
+    { id: "k7", type: "report", src: { en: "Scene report", fr: "Constat de scène", es: "Informe de la escena" },
+      txt: { en: "The emptied cradle is the greenhouse's own, at the top of the frame: the crystal could not be taken from any other building.",
+             fr: "Le berceau vidé est celui de la serre, au sommet de l'arceau : le cristal ne pouvait être retiré d'aucun autre bâtiment.",
+             es: "La cuna vacía es la del invernadero, en lo alto del arco: el cristal no podía sacarse de ningún otro edificio." },
+      excl: [], exclP: ["p2", "p3", "p4"] },
+    { id: "k8", type: "claim", src: { en: "Sylvain's statement", fr: "Déclaration de Sylvain", es: "Declaración de Sylvain" },
+      txt: { en: "“I planed the washhouse balustrade all night.” At 6 am the balustrade was covered in intact dew, without a single shaving.",
+             fr: "« J'ai raboté la balustrade du lavoir toute la nuit. » À 6 h, la balustrade était couverte de rosée intacte, sans un seul copeau.",
+             es: "«Cepillé la balaustrada del lavadero toda la noche.» A las 6, la balaustrada estaba cubierta de rocío intacto, sin una sola viruta." },
+      excl: [], exclP: [] },
+    { id: "k9", type: "info", src: { en: "Communal tool census", fr: "Recensement des outils de la commune", es: "Censo de herramientas del municipio" },
+      txt: { en: "The mayor's sealed tool census lists a single wide horn-handled chisel in town: the one from Sylvain's workshop — and this morning it is missing from his rack. Vivienne's instruments are laid out and clean, Apolline owns none, Rose works with felt and a pruning knife, Célestin has never held a chisel.",
+             fr: "Le recensement des outils scellé par le maire ne recense qu'un seul ciseau large à poignée de corne en ville : celui de l'atelier de Sylvain — et ce matin, il manque de sa râtele. Les instruments de Vivienne sont étalés et propres, Apolline n'en possède aucun, Rose ne travaille qu'au feutre et à la serpe, Célestin n'a jamais tenu un ciseau.",
+             es: "El censo de herramientas sellado por el alcalde registra un único formón ancho de mango de cuerno en el pueblo: el del taller de Sylvain, y esta mañana falta de su perchero. Los instrumentos de Vivienne están extendidos y limpios, Apolline no posee ninguno, Rose trabaja con fieltro y podadera, Célestin jamás sostuvo un formón." },
+      excl: ["s1", "s2", "s4", "s5"], exclP: [] },
+    { id: "k10", type: "object", src: { en: "Found on the ladder", fr: "Trouvé sur l'échelle", es: "Hallado en la escalera" },
+      txt: { en: "A film of hide glue on the dry rungs — the glue Sylvain warms for his veneers.",
+             fr: "Un voile de colle de peau sur les barreaux secs — la colle que Sylvain fait chauffer pour ses placages.",
+             es: "Una película de cola de piel en los peldaños secos: la cola que Sylvain calienta para sus chapeados." },
+      excl: [], exclP: [] }
+  ],
+  solution: { thief: "s3", place: "p1", clue: "k9" },
+  hints: [
+    { en: "Who could stand between 4 and 6 — and who else saw them there?",
+      fr: "Qui pouvait être debout entre 4 h et 6 h — et qui d'autre l'a vu ?",
+      es: "¿Quién podía estar en pie entre las 4 y las 6, y quién más lo vio?" },
+    { en: "The cradle was not unscrewed: reread the splinters. Which tool does that work?",
+      fr: "Le berceau n'a pas été dévissé : relisez les éclats. Quel outil fait ce travail ?",
+      es: "La cuna no se desatornilló: relee las astillas. ¿Qué herramienta hace ese trabajo?" },
+    { en: "The tool census leaves only one possible owner for that chisel.",
+      fr: "Le recensement des outils ne laisse qu'un propriétaire possible pour ce ciseau.",
+      es: "El censo de herramientas deja un único dueño posible para ese formón." }
+  ],
+  explain: [
+    { refs: ["k1"], txt: { en: "The dew sets the window: between 4 and 6 (Exhibit 1).",
+      fr: "La rosée fixe la fenêtre : entre 4 h et 6 h (Pièce 1).",
+      es: "El rocío fija la ventana: entre las 4 y las 6 (Pieza 1)." } },
+    { refs: ["k4", "k3", "k2"], txt: { en: "The purring cat clears Rose (Exhibit 4), the route sheet clears Apolline (Exhibit 3), the baker's dough turns clear Célestin (Exhibit 2).",
+      fr: "La chatte qui ronronne écarte Rose (Pièce 4), la feuille de route écarte Apolline (Pièce 3), les tours de pétrin du boulanger écartent Célestin (Pièce 2).",
+      es: "La gata que ronronea descarta a Rose (Pieza 4), la hoja de ruta descarta a Apolline (Pieza 3), los amasados del panadero descartan a Célestin (Pieza 2)." } },
+    { refs: ["k5"], txt: { en: "Vivienne's balloon alibi collapses: her automat does the releasing without her (Exhibit 5).",
+      fr: "L'alibi du ballon de Vivienne s'effondre : son automate fait le lâcher sans elle (Pièce 5).",
+      es: "La coartada del globo de Vivienne se derrumba: su autómata hace la suelta sin ella (Pieza 5)." } },
+    { refs: ["k6", "k9"], txt: { en: "The crystal was chiselled out, and the only wide chisel in town — Sylvain's — is missing from its rack this very morning (Exhibits 6 and 9). Vivienne has no such tool.",
+      fr: "Le cristal a été dégagé au ciseau, et le seul ciseau large de la ville — celui de Sylvain — manque de sa râtele ce matin même (Pièces 6 et 9). Vivienne n'a pas un tel outil.",
+      es: "El cristal se sacó a formón, y el único formón ancho del pueblo —el de Sylvain— falta de su perchero esta misma mañana (Piezas 6 y 9). Vivienne no tiene tal herramienta." } },
+    { refs: ["k8"], txt: { en: "His own story falls too: the balustrade he “planed all night” wore untouched dew (Exhibit 8).",
+      fr: "Son propre récit tombe aussi : la balustrade qu'il « rabotait toute la nuit » portait une rosée intacte (Pièce 8).",
+      es: "Su propio relato también cae: la balaustrada que «cepilló toda la noche» lucía un rocío intacto (Pieza 8)." } },
+    { refs: ["k10"], txt: { en: "Hide glue on the ladder rungs seals it (Exhibit 10).",
+      fr: "La colle de peau sur les barreaux de l'échelle scelle tout (Pièce 10).",
+      es: "La cola de piel en los peldaños de la escalera lo sella (Pieza 10)." } },
+    { refs: [], txt: { en: "Sylvain confesses: he meant to carve a “star chandelier” for the school roof and return the crystal by dawn.",
+      fr: "Sylvain avoue : il voulait tailler un « lustre d'étoile » pour le toit de l'école et rendre le cristal à l'aube.",
+      es: "Sylvain confiesa: quería tallar un «candelabro de estrella» para el techo de la escuela y devolver el cristal al alba." } }
+  ],
+  epilogue: { en: "The crystal is back before the peaches notice. Sylvain carves the school a wooden sun instead — it never needs polishing.",
+    fr: "Le cristal est remis avant que les pêches ne s'en aperçoivent. Sylvain taille un soleil de bois pour l'école — il ne demande jamais d'entretien.",
+    es: "El cristal vuelve antes de que los melocotones lo noten. Sylvain talla un sol de madera para la escuela: nunca hay que pulirlo." }
+},
+{
+  id: "case5", diff: 5, finale: false, town: "Vitrine-sur-Onde",
+  title: { en: "The Museum Sun-Furnace", fr: "Le four-solaire du musée", es: "El horno solar del museo" },
+  intro: {
+    en: "The museum of Vitrine-sur-Onde keeps a small sun-furnace that gilds the rotunda every evening. On lantern-parade night, it left its pedestal in the dark. Five people were near the museum.",
+    fr: "Le musée de Vitrine-sur-Onde conserve un four-solaire qui dore la rotonde chaque soir. Le soir du défilé des lanternes, il a quitté son socle dans l'obscurité. Cinq personnes étaient près du musée.",
+    es: "El museo de Vitrine-sur-Onde guarda un horno solar que dora la rotonda cada tarde. La noche del desfile de faroles, dejó su pedestal en la oscuridad. Cinco personas estaban cerca del museo."
+  },
+  suspects: [
+    { id: "s1", name: "Lambert", face: { skin: "#f2c9a0", shirt: "#5c6b7a", hair: "#4a3626", hat: "cap", extra: "none" },
+      role: { en: "The night watchman", fr: "Le veilleur de nuit", es: "El sereno" },
+      note: { en: "Writes down every round, every hour.", fr: "Note chaque ronde, chaque heure.", es: "Anota cada ronda, cada hora." } },
+    { id: "s2", name: "Bérénice", face: { skin: "#eab68a", shirt: "#b5a8c9", hair: "#2a2a2a", hat: "bun", extra: "glasses" },
+      role: { en: "The curator", fr: "La conservatrice", es: "La conservadora" },
+      note: { en: "Seals every showcase herself.", fr: "Scelle chaque vitrine elle-même.", es: "Sella cada vitrina ella misma." } },
+    { id: "s3", name: "Octave", face: { skin: "#f2c9a0", shirt: "#f0d47a", hair: "#6b6b6b", hat: "boater", extra: "mustache" },
+      role: { en: "The ice-cream seller", fr: "Le marchand de glaces", es: "El heladero" },
+      note: { en: "Closes early on parade nights.", fr: "Ferme tôt les soirs de défilé.", es: "Cierra pronto las noches de desfile." } },
+    { id: "s4", name: "Sœur Comète", face: { skin: "#eab68a", shirt: "#e8e0c9", hair: "#3a2a1a", hat: "veil", extra: "none" },
+      role: { en: "The astronomer nun", fr: "La sœur astronome", es: "La hermana astrónoma" },
+      note: { en: "Observes Jupiter from the bell tower.", fr: "Observe Jupiter depuis le clocher.", es: "Observa Júpiter desde el campanario." } },
+    { id: "s5", name: "Vadim", face: { skin: "#f5f0e6", shirt: "#f2f2f2", hair: "#2a2a2a", hat: "beret", extra: "stripe" },
+      role: { en: "The mime", fr: "Le mime", es: "El mimo" },
+      note: { en: "Holds still for hours, then doesn't.", fr: "Tient immobile des heures, puis plus.", es: "Se queda quieto horas, y luego no." } }
+  ],
+  places: [
+    { id: "p3", name: { en: "The market square", fr: "La place du marché", es: "La plaza del mercado" } },
+    { id: "p2", name: { en: "The curator's office", fr: "Le bureau de la conservatrice", es: "El despacho de la conservadora" } },
+    { id: "p1", name: { en: "The rotunda", fr: "La rotonde", es: "La rotonda" } },
+    { id: "p4", name: { en: "The bell tower", fr: "Le clocher", es: "El campanario" } }
+  ],
+  timeline: [
+    { t: "21:30", txt: { en: "The lantern parade gathers; the town dims its lamps for the procession.", fr: "Le défilé des lanternes se rassemble ; la ville baisse ses lampes pour la procession.", es: "El desfile de faroles se reúne; el pueblo baja sus lámparas para la procesión." } },
+    { t: "21:35", txt: { en: "The photographer's quartz-stamped shot: Lambert fights a tombola fire on the square.", fr: "Le tirage du photographe, horodaté au quartz : Lambert combat un feu de tombola sur la place.", es: "La foto del fotógrafo, fechada por cuarzo: Lambert apaga un fuego de tómbola en la plaza." } },
+    { t: "21:45", txt: { en: "The procession passes the museum: the rotunda falls dark until 22:00.", fr: "La procession passe devant le musée : la rotonde plonge dans le noir jusqu'à 22 h.", es: "La procesión pasa ante el museo: la rotonda queda a oscuras hasta las 22:00." } },
+    { t: "21:50*", txt: { en: "“Bérénice's tea”, noted by Lambert at the museum pendulum (*a fast clock, see Exhibit 7).", fr: "« Thé de Bérénice », noté par Lambert au pendule du musée (*pendule en avance, voir Pièce 7).", es: "«Té de Bérénice», anotado por Lambert en el péndulo del museo (*péndulo adelantado, ver Pieza 7)." } },
+    { t: "22:00", txt: { en: "The parade ends; the lamps come back.", fr: "Le défilé s'achève ; les lampes reviennent.", es: "El desfile termina; vuelven las lámparas." } },
+    { t: "22:15", txt: { en: "The sun-furnace's pedestal is found empty.", fr: "Le socle du four-solaire est découvert vide.", es: "El pedestal del horno solar aparece vacío." } }
+  ],
+  clues: [
+    { id: "k1", type: "testimony", src: { en: "The tower astronomer", fr: "L'astronome du clocher", es: "El astrónomo del campanario" },
+      txt: { en: "“Sister Comète never left her telescope from 9:30 to 10; we discussed eclipses the whole hour.”",
+             fr: "« Sœur Comète n'a pas quitté son télescope de 21 h 30 à 22 h ; nous avons discuté éclipses toute l'heure. »",
+             es: "«La hermana Comète no dejó su telescopio de 21:30 a 22:00; hablamos de eclipses toda la hora.»" },
+      excl: ["s4"], exclP: [] },
+    { id: "k2", type: "testimony", src: { en: "Three children", fr: "Trois enfants", es: "Tres niños" },
+      txt: { en: "“We never took our eyes off Vadim: he stood on his box on the market square — we counted his blinks.”",
+             fr: "« Nous n'avons pas quitté Vadim des yeux : il tenait sa boîte sur la place du marché — nous avons compté ses clignements. »",
+             es: "«No le quitamos el ojo a Vadim: se mantuvo sobre su caja en la plaza del mercado; contamos sus parpadeos.»" },
+      excl: ["s5"], exclP: [] },
+    { id: "k3", type: "object", src: { en: "Quartz-stamped print", fr: "Tirage horodaté au quartz", es: "Foto fechada por cuarzo" },
+      txt: { en: "The photographer's shot, timed by his quartz watch (9:35 pm), shows Lambert handling an extinguisher by the burning tombola.",
+             fr: "Le tirage du photographe, horodaté par son quartz (21 h 35), montre Lambert maniant un extincteur près de la tombola en flammes.",
+             es: "La foto del fotógrafo, fechada por su reloj de cuarzo (21:35), muestra a Lambert con un extintor junto a la tómbola en llamas." },
+      excl: ["s1"], exclP: [] },
+    { id: "k4", type: "claim", src: { en: "Octave's statement", fr: "Déclaration d'Octave", es: "Declaración de Octave" },
+      txt: { en: "“I shut my shop at 9:30, then dined home alone.” Nobody saw him.",
+             fr: "« J'ai fermé ma boutique à 21 h 30, puis j'ai dîné seul chez moi. » Personne ne l'a vu.",
+             es: "«Cerré mi tienda a las 21:30 y cené solo en casa.» Nadie lo vio." },
+      excl: [], exclP: [] },
+    { id: "k5", type: "claim", src: { en: "Bérénice's statement", fr: "Déclaration de Bérénice", es: "Declaración de Bérénice" },
+      txt: { en: "“Cataloguing at my desk from 9:30 to 10, without moving.”",
+             fr: "« Catalogage à mon bureau de 21 h 30 à 22 h, sans bouger. »",
+             es: "«Catalogando en mi despacho de 21:30 a 22:00, sin moverme.»" },
+      excl: [], exclP: [] },
+    { id: "k6", type: "testimony", src: { en: "Lambert, corroborated", fr: "Lambert, corroboré", es: "Lambert, corroborado" },
+      txt: { en: "“At 9:50 I brought her the tea; she was writing, pen in hand.” Time noted on the museum pendulum — the office clock.",
+             fr: "« À 21 h 50, je lui ai apporté son thé ; elle écrivait, feutre en main. » Heure notée au pendule du musée — l'horloge du bureau.",
+             es: "«A las 21:50 le llevé el té; estaba escribiendo, pluma en mano.» Hora anotada en el péndulo del museo, el reloj del despacho." },
+      excl: [], exclP: [] },
+    { id: "k7", type: "report", src: { en: "Clockmaker's log", fr: "Carnet de l'horloger", es: "Cuaderno del relojero" },
+      txt: { en: "The museum pendulum, overwound, ran TEN MINUTES FAST that night.",
+             fr: "Le pendule du musée, remonté trop fort, AVANÇAIT DE DIX MINUTES cette nuit-là.",
+             es: "El péndulo del museo, sobre-cargado, ADELANTABA DIEZ MINUTOS esa noche." },
+      excl: [], exclP: [] },
+    { id: "k8", type: "report", src: { en: "Scene report", fr: "Constat de scène", es: "Informe de la escena" },
+      txt: { en: "The showcase wax seal was cut clean and reglued after opening: the theft was done from inside the rotunda, by someone entitled to handle the seal.",
+             fr: "La cire du cachet de la vitrine a été coupée net puis recollée après ouverture : le vol a été commis depuis l'intérieur de la rotonde, par une personne habilitée à manier le scellé.",
+             es: "El lacre del precinto se cortó limpio y se volvió a pegar tras la apertura: el robo se cometió desde dentro de la rotonda, por alguien autorizado a manejar el sello." },
+      excl: [], exclP: ["p2", "p3", "p4"] },
+    { id: "k9", type: "report", src: { en: "Time recomputation", fr: "Recalcul des heures", es: "Recálculo de las horas" },
+      txt: { en: "The pendulum's “9:50” was 9:40 true time: the tea was served five minutes BEFORE the rotunda went dark (9:45–10:00). Lambert's sighting covers nothing of the theft window.",
+             fr: "Le « 21 h 50 » du pendule valait 21 h 40 vrai : le thé a été servi cinq minutes AVANT que la rotonde ne plonge dans le noir (21 h 45 – 22 h 00). La vision de Lambert ne couvre rien du créneau du vol.",
+             es: "El «21:50» del péndulo eran las 21:40 reales: el té se sirvió cinco minutos ANTES de que la rotonda quedara a oscuras (21:45–22:00). Lo que vio Lambert no cubre nada del intervalo del robo." },
+      excl: [], exclP: [] },
+    { id: "k10", type: "info", src: { en: "Restoration workshop census", fr: "Recensement de l'atelier de restauration", es: "Censo del taller de restauración" },
+      txt: { en: "The showcase was opened with a fine restoration blade, without chipping the wax: the sealed workshop census lists exactly two such blades, both charged to the curator.",
+             fr: "La vitrine a été ouverte à la lame fine de restauration, sans ébrécher la cire : le recensement scellé de l'atelier en dénombre exactement deux, toutes deux à la charge de la conservatrice.",
+             es: "La vitrina se abrió con una fina hoja de restauración, sin astillar el lacre: el censo sellado del taller registra exactamente dos, ambas a cargo de la conservadora." },
+      excl: ["s1", "s3", "s4", "s5"], exclP: [] }
+  ],
+  solution: { thief: "s2", place: "p1", clue: "k10" },
+  hints: [
+    { en: "Two statements rest on nobody's word but the speaker's. Which ones?",
+      fr: "Deux déclarations ne s'appuient sur la parole de personne d'autre que leur auteur. Lesquelles ?",
+      es: "Dos declaraciones se apoyan solo en la palabra de quien las da. ¿Cuáles?" },
+    { en: "The tea time comes from the museum pendulum. What does the clockmaker's log say?",
+      fr: "L'heure du thé vient du pendule du musée. Que dit le carnet de l'horloger ?",
+      es: "La hora del té viene del péndulo del museo. ¿Qué dice el cuaderno del relojero?" },
+    { en: "Reglued wax and a fine blade point to one particular craft.",
+      fr: "La cire recollée et la lame fine désignent un métier précis.",
+      es: "El lacre repegado y la hoja fina señalan un oficio concreto." }
+  ],
+  explain: [
+    { refs: ["k1", "k2", "k3"], txt: { en: "Solid corroboration clears Sister Comète (Exhibit 1), Vadim (Exhibit 2) and Lambert (Exhibit 3).",
+      fr: "Des corroborations solides écartent Sœur Comète (Pièce 1), Vadim (Pièce 2) et Lambert (Pièce 3).",
+      es: "Corrobaciones sólidas descartan a la hermana Comète (Pieza 1), Vadim (Pieza 2) y Lambert (Pieza 3)." } },
+    { refs: ["k4", "k5"], txt: { en: "Only Octave and Bérénice remain, and both statements rest on themselves alone (Exhibits 4–5).",
+      fr: "Ne restent qu'Octave et Bérénice, et leurs deux dépositions ne reposent que sur eux-mêmes (Pièces 4-5).",
+      es: "Solo quedan Octave y Bérénice, y ambas declaraciones reposan únicamente en ellos (Piezas 4-5)." } },
+    { refs: ["k6", "k7", "k9"], txt: { en: "The tea seemed to cover Bérénice — but the pendulum ran ten minutes fast: the tea was served at 9:40, before the rotunda went dark. The alibi evaporates (Exhibits 6, 7, 9).",
+      fr: "Le thé semblait couvrir Bérénice — mais le pendule avançait de dix minutes : le thé a été servi à 21 h 40, avant le noir de la rotonde. L'alibi s'évapore (Pièces 6, 7, 9).",
+      es: "El té parecía cubrir a Bérénice, pero el péndulo adelantaba diez minutos: el té se sirvió a las 21:40, antes del oscuro de la rotonda. La coartada se esfuma (Piezas 6, 7 y 9)." } },
+    { refs: ["k8"], txt: { en: "The wax, cut and reglued from inside, demands someone entitled to handle the seal (Exhibit 8).",
+      fr: "La cire, coupée et recollée depuis l'intérieur, exige une personne habilitée à manier le scellé (Pièce 8).",
+      es: "El lacre, cortado y repegado desde dentro, exige a alguien autorizado a manejar el sello (Pieza 8)." } },
+    { refs: ["k10"], txt: { en: "The fine restoration blade belongs to the curator's craft — Octave owns neither blade nor seal right. Bérénice is the thief; Octave is merely dine-alone (Exhibit 10).",
+      fr: "La lame fine de restauration relève du métier de la conservatrice — Octave n'a ni lame ni droit de scellé. Bérénice est la voleuse ; Octave a seulement dîné seul (Pièce 10).",
+      es: "La fina hoja de restauración pertenece al oficio de la conservadora; Octave no tiene hoja ni derecho de sello. Bérénice es la ladrona; Octave solo cenó solo (Pieza 10)." } },
+    { refs: [], txt: { en: "Bérénice confesses: she meant to give her retiring mentor one “night of lanterns only”, borrowing the furnace for a single evening.",
+      fr: "Bérénice avoue : elle voulait offrir à son mentor partant une « nuit aux lanternes » seule, en empruntant le four pour un unique soir.",
+      es: "Bérénice confiesa: quería regalar a su mentor jubilado una «noche solo de faroles», tomando prestado el horno por una única velada." } }
+  ],
+  epilogue: { en: "The furnace glows again by morning. Her mentor, told everything, laughs until he cries — and donates his own lantern collection.",
+    fr: "Le four rayonne à nouveau dès le matin. Son mentor, mis au courant, rit aux larmes — et lègue sa propre collection de lanternes.",
+    es: "El horno vuelve a brillar por la mañana. Su mentor, al saberlo, ríe hasta llorar y dona su propia colección de faroles." }
+},
+{
+  id: "case6", diff: 5, finale: true, town: "Luminelle",
+  title: { en: "The Great Sun", fr: "Le Grand Soleil", es: "El Gran Sol" },
+  intro: {
+    en: "Luminelle, the capital of the valley: every town keeps a miniature sun, and the greatest of them all hangs in a cage atop the square's mast. On the eve of the festival, dawn found the cage open. The sun-thief of the legends… or a neighbour?",
+    fr: "Luminelle, la capitale de la vallée : chaque ville garde un soleil miniature, et le plus grand de tous pend dans une cage au sommet du mât de la place. À la veille de la fête, l'aube a trouvé la cage ouverte. Le voleur de soleils des légendes… ou un voisin ?",
+    es: "Luminelle, la capital del valle: cada pueblo guarda un sol en miniatura, y el mayor de todos cuelga en una jaula en lo alto del mástil de la plaza. En vísperas de la fiesta, el alba encontró la jaula abierta. ¿El ladrón de soles de las leyendas… o un vecino?"
+  },
+  suspects: [
+    { id: "s1", name: "Ambre", face: { skin: "#eab68a", shirt: "#f0d47a", hair: "#8a5a33", hat: "flower", extra: "none" },
+      role: { en: "The moth keeper", fr: "La lépidoptériste", es: "La mariposera" },
+      note: { en: "Her moths dance at every ball.", fr: "Ses phalènes dansent à chaque bal.", es: "Sus polillas bailan en cada fiesta." } },
+    { id: "s2", name: "Cosme", face: { skin: "#f2c9a0", shirt: "#5c6b7a", hair: "#d8d8d8", hat: "none", extra: "glasses" },
+      role: { en: "The astronomer", fr: "L'astronome", es: "El astrónomo" },
+      note: { en: "Nights are his working hours.", fr: "Les nuits sont ses heures de travail.", es: "Las noches son su jornada." } },
+    { id: "s3", name: "Gelato", face: { skin: "#f2c9a0", shirt: "#f0a8a0", hair: "#4a3626", hat: "boater", extra: "mustache" },
+      role: { en: "The ice-cream maker", fr: "Le glacier", es: "El heladero" },
+      note: { en: "Cold is his whole livelihood.", fr: "Le froid est tout son gagne-pain.", es: "El frío es todo su sustento." } },
+    { id: "s4", name: "Ombreline", face: { skin: "#eab68a", shirt: "#9a8fb5", hair: "#2a2a2a", hat: "hood", extra: "none" },
+      role: { en: "The shadow player", fr: "La montreuse d'ombres", es: "La teatrista de sombras" },
+      note: { en: "Rehearses alone in her attic.", fr: "Répète seule dans sa soupente.", es: "Ensaya sola en su desván." } },
+    { id: "s5", name: "Boniface", face: { skin: "#f2c9a0", shirt: "#e8e0c9", hair: "#d8d8d8", hat: "chain", extra: "none" },
+      role: { en: "The mayor", fr: "Le maire", es: "El alcalde" },
+      note: { en: "Signs everything, twice.", fr: "Signe tout, deux fois.", es: "Firma todo, dos veces." } }
+  ],
+  places: [
+    { id: "p2", name: { en: "The observatory", fr: "L'observatoire", es: "El observatorio" } },
+    { id: "p4", name: { en: "The town hall", fr: "La mairie", es: "El ayuntamiento" } },
+    { id: "p3", name: { en: "The ice cellar", fr: "La cave du glacier", es: "La bodega del heladero" } },
+    { id: "p1", name: { en: "The square and its mast", fr: "La place et son mât", es: "La plaza y su mástil" } }
+  ],
+  timeline: [
+    { t: "23:00", txt: { en: "The Great Sun is hoisted to its mast for the festival eve.", fr: "Le Grand Soleil est hissé à son mât pour la veille de la fête.", es: "El Gran Sol se iza en su mástil para la víspera de la fiesta." } },
+    { t: "23:30", txt: { en: "The night watch hears the mast's stay rope “sing” (a rope rubbing).", fr: "Le guet entend « chanter » le hauban du mât (une corde qui frotte).", es: "La ronda oye «cantar» el obenque del mástil (una cuerda que roza)." } },
+    { t: "01:00", txt: { en: "Unusual thick smoke rises from the observatory's mirror well.", fr: "Une fumée épaisse et inhabituelle monte du puits à miroirs de l'observatoire.", es: "Un humo espeso e inusual sube del pozo de espejos del observatorio." } },
+    { t: "03:00", txt: { en: "The watch finds the stay rope slack.", fr: "Le guet relève le hauban détendu.", es: "La ronda nota el obenque flojo." } },
+    { t: "06:30", txt: { en: "At dawn, the Sun's cage hangs open and empty.", fr: "À l'aube, la cage du Soleil pend ouverte et vide.", es: "Al alba, la jaula del Sol cuelga abierta y vacía." } }
+  ],
+  clues: [
+    { id: "k1", type: "object", src: { en: "Lantern-ball prints", fr: "Tirages du bal des lanternes", es: "Fotos del baile de faroles" },
+      txt: { en: "Three photographers framed Ambre and her trained moths without interruption from 11 pm to 1 am.",
+             fr: "Trois photographes ont cadré Ambre et ses phalènes apprivoisées sans interruption de 23 h à 1 h.",
+             es: "Tres fotógrafos encuadraron a Ambre y sus polillas adiestradas sin interrupción de 23:00 a 1:00." },
+      excl: ["s1"], exclP: [] },
+    { id: "k2", type: "report", src: { en: "Milk ledger", fr: "Carnet du lait", es: "Libreta de la leche" },
+      txt: { en: "Both milk carters spent the night saving Gelato's creams from his flooded cellar; he never left the pump.",
+             fr: "Les deux livreurs de lait ont passé la nuit à sauver les crèmes de Gelato de sa cave inondée ; il n'a pas quitté la pompe.",
+             es: "Los dos lecheros pasaron la noche salvando las cremas de Gelato de su bodega inundada; él no se apartó de la bomba." },
+      excl: ["s3"], exclP: [] },
+    { id: "k3", type: "report", src: { en: "Notary's minute", fr: "Minute du notaire", es: "Acta del notario" },
+      txt: { en: "The mayor signed festival regulations page by page from 11 pm to 1 am, in the notary's presence (telegram archived at 0:40).",
+             fr: "Le maire a signé le règlement de la fête page après page de 23 h à 1 h, en présence du notaire (télégramme archivé à 0 h 40).",
+             es: "El alcalde firmó el reglamento de la fiesta página a página de 23:00 a 1:00, en presencia del notario (telegrama archivado a las 0:40)." },
+      excl: ["s5"], exclP: [] },
+    { id: "k4", type: "claim", src: { en: "Ombreline's statement", fr: "Déclaration d'Ombreline", es: "Declaración de Ombreline" },
+      txt: { en: "“I rehearsed ‘The Stolen Sun’ in my attic all night, alone.”",
+             fr: "« J'ai répété “Le Soleil dérobé” dans ma soupente toute la nuit, seule. »",
+             es: "«Ensayé ‘El Sol robado’ en mi desván toda la noche, sola.»" },
+      excl: [], exclP: [] },
+    { id: "k5", type: "object", src: { en: "Found at the theatre", fr: "Trouvé au théâtre", es: "Hallado en el teatro" },
+      txt: { en: "In the dust: a programme reading “The Stolen Sun — premiere on festival day”. A coincidence that accuses.",
+             fr: "Dans la poussière : un programme « Le Soleil dérobé — création le jour de la fête ». Une coïncidence qui accuse.",
+             es: "En el polvo: un programa que reza «El Sol robado, estreno el día de la fiesta». Una coincidencia que acusa." },
+      excl: [], exclP: [] },
+    { id: "k6", type: "report", src: { en: "Scene report", fr: "Constat de scène", es: "Informe de la escena" },
+      txt: { en: "The Sun's cage was opened from the mast itself; the stay rope served as a descent line (singing rope at 11:30 pm, slack by 3 am).",
+             fr: "La cage du Soleil a été ouverte depuis le mât même ; le hauban a servi de ligne de descente (corde chantante à 23 h 30, détendue à 3 h).",
+             es: "La jaula del Sol se abrió desde el propio mástil; el obenque sirvió de cuerda de descenso (cuerda cantora a las 23:30, floja a las 3:00)." },
+      excl: [], exclP: ["p2", "p3", "p4"] },
+    { id: "k7", type: "report", src: { en: "Knot analysis", fr: "Analyse du nœud", es: "Análisis del nudo" },
+      txt: { en: "The descent knot is a “fox knot” — the one astronomers use to fix star charts to their instrument masts.",
+             fr: "Le nœud de descente est un « nœud de renard » — celui des astronomes pour fixer leurs cartes du ciel aux mâts d'instruments.",
+             es: "El nudo de descenso es un «nudo de zorro», el que usan los astrónomos para fijar sus cartas a los mástiles de instrumentos." },
+      excl: [], exclP: [] },
+    { id: "k8", type: "testimony", src: { en: "The baker", fr: "Le boulanger", es: "El panadero" },
+      txt: { en: "“Coming up at 1 am, thick smoke rose from the observatory's mirror well — never seen at that hour.”",
+             fr: "« En remontant à 1 h, une fumée épaisse sortait du puits à miroirs de l'observatoire — jamais vu à cette heure-là. »",
+             es: "«Al subir a la 1:00, un humo espeso salía del pozo de espejos del observatorio; nunca lo vi a esa hora.»" },
+      excl: [], exclP: [] },
+    { id: "k9", type: "report", src: { en: "Cellar valve inquiry", fr: "Enquête sur la vanne de la cave", es: "Investigación de la llave de la bodega" },
+      txt: { en: "Gelato's flood began with a valve left open around 10 pm. Malice or oversight — the inquiry cannot say.",
+             fr: "L'inondation de la cave de Gelato a commencé par une vanne oubliée ouverte vers 22 h. Malveillance ou oubli — l'enquête ne peut trancher.",
+             es: "La inundación de la bodega de Gelato empezó por una llave dejada abierta hacia las 22:00. Malicia u olvido: la investigación no puede decidirlo." },
+      excl: [], exclP: [] },
+    { id: "k10", type: "object", src: { en: "Mayor's pierced agenda", fr: "Agenda troué du maire", es: "Agenda taladrado del alcalde" },
+      txt: { en: "A torn page betrays a secret 11 pm meeting with a “festival-risk insurer”. The notary, however, confirms the signing never stopped.",
+             fr: "Une page arrachée trahit un rendez-vous secret à 23 h avec un « assureur risques de fête ». Le notaire confirme pourtant que la signature n'a pas cessé.",
+             es: "Una página arrancada delata una cita secreta a las 23:00 con un «asegurador de riesgos festivos». El notario confirma, sin embargo, que la firma no cesó." },
+      excl: [], exclP: [] },
+    { id: "k11", type: "info", src: { en: "Fallen notebook", fr: "Carnet tombé", es: "Cuaderno caído" },
+      txt: { en: "At the mast's foot lies an observation notebook: sketches of the mast, of the cage, and a line ciphered by transposition — “IF I GO OUT, SHE GOES OUT” — under the same monogram that seals the observatory's registers. The notebook is missing from the observatory and its owner never reported it.",
+             fr: "Au pied du mât gît un carnet d'observations : croquis du mât, de la cage, et une ligne chiffrée par transposition — « SI JE M'ÉTEINS, ELLE S'ÉTEINT » — sous le même monogramme qui scelle les registres de l'observatoire. Le carnet manque de l'observatoire et son propriétaire ne l'a jamais signalé.",
+             es: "Al pie del mástil yace un cuaderno de observaciones: croquis del mástil, de la jaula y una línea cifrada por transposición —«SI YO ME APAGO, ELLA SE APAGA»— bajo el mismo monograma que sella los registros del observatorio. El cuaderno falta del observatorio y su dueño jamás lo denunció." },
+      excl: ["s1", "s3", "s4", "s5"], exclP: [] },
+    { id: "k12", type: "report", src: { en: "Watch testimony", fr: "Témoignage du guet", es: "Testimonio de la ronda" },
+      txt: { en: "For three evenings the Great Sun had been flickering faintly — visible only through a telescope.",
+             fr: "Depuis trois soirs, le Grand Soleil grésillait faiblement — visible seulement au télescope.",
+             es: "Desde hacía tres tardes, el Gran Sol parpadeaba débilmente, visible solo con telescopio." },
+      excl: [], exclP: [] }
+  ],
+  solution: { thief: "s2", place: "p1", clue: "k11" },
+  hints: [
+    { en: "Three suspects have iron-cast alibis. Look instead for whoever could be alone that night.",
+      fr: "Trois suspects ont des alibis en béton. Cherchez plutôt celui qui a pu se retrouver seul cette nuit-là.",
+      es: "Tres sospechosos tienen coartadas de hierro. Busca más bien a quien pudo quedarse solo esa noche." },
+    { en: "The stay rope was the way down, and someone was firing the mirror well at 1 am.",
+      fr: "Le hauban a servi de descente, et quelqu'un allumait le puits à miroirs à 1 h.",
+      es: "El obenque fue la vía de descenso, y alguien encendía el pozo de espejos a la 1:00." },
+    { en: "The fallen notebook bears a monogram and a ciphered line: whose is it?",
+      fr: "Le carnet tombé porte un monogramme et une phrase chiffrée : à qui est-il ?",
+      es: "El cuaderno caído lleva un monograma y una frase cifrada: ¿de quién es?" }
+  ],
+  explain: [
+    { refs: ["k1", "k2", "k3"], txt: { en: "Photos, milk ledger and notary clear Ambre, Gelato and the mayor (Exhibits 1–3) — the flooded cellar and pierced agenda were noise (Exhibits 9–10).",
+      fr: "Photos, carnet du lait et notaire écartent Ambre, Gelato et le maire (Pièces 1-3) — la cave inondée et l'agenda troué n'étaient que du bruit (Pièces 9-10).",
+      es: "Fotos, libreta de la leche y notario descartan a Ambre, Gelato y al alcalde (Piezas 1-3); la bodega inundada y el agenda taladrado eran ruido (Piezas 9-10)." } },
+    { refs: ["k4", "k5"], txt: { en: "Ombreline's premiere title is cruel coincidence, her statement self-only — she stays possible, for now (Exhibits 4–5).",
+      fr: "Le titre de la création d'Ombreline est une coïncidence cruelle, sa déposition ne repose que sur elle — elle reste possible, pour l'instant (Pièces 4-5).",
+      es: "El título del estreno de Ombreline es una cruel coincidencia, su declaración es solo suya; sigue siendo posible, por ahora (Piezas 4-5)." } },
+    { refs: ["k6"], txt: { en: "The Sun was taken from the mast itself, down the stay rope (Exhibit 6).",
+      fr: "Le Soleil a été pris depuis le mât même, descendu le long du hauban (Pièce 6).",
+      es: "El Sol se llevó desde el propio mástil, bajado por el obenque (Pieza 6)." } },
+    { refs: ["k7", "k8"], txt: { en: "An astronomer's fox knot, and the mirror well smoking at 1 am — the observatory was awake (Exhibits 7–8).",
+      fr: "Un nœud de renard d'astronome, et le puits à miroirs fumant à 1 h — l'observatoire était éveillé (Pièces 7-8).",
+      es: "Un nudo de zorro de astrónomo, y el pozo de espejos humeando a la 1:00: el observatorio estaba despierto (Piezas 7-8)." } },
+    { refs: ["k11"], txt: { en: "The fallen notebook carries the observatory's monogram and its owner never reported it — it cannot be Ombreline's; no one else lacks an alibi. Cosme is the thief (Exhibit 11).",
+      fr: "Le carnet tombé porte le monogramme de l'observatoire et son propriétaire ne l'a jamais signalé — il ne peut être à Ombreline ; personne d'autre n'est sans alibi. Cosme est le voleur (Pièce 11).",
+      es: "El cuaderno caído lleva el monograma del observatorio y su dueño jamás lo denunció: no puede ser de Ombreline; nadie más carece de coartada. Cosme es el ladrón (Pieza 11)." } },
+    { refs: ["k12"], txt: { en: "The ciphered line decodes: “If I go out, she goes out.” The Sun had been dying for three evenings, visible only through a telescope (Exhibit 12).",
+      fr: "La ligne chiffrée se décode : « Si je m'éteins, elle s'éteint. » Le Soleil mourait depuis trois soirs, visible seulement au télescope (Pièce 12).",
+      es: "La frase cifrada se descifra: «Si yo me apago, ella se apaga». El Sol moría desde tres tardes, visible solo con telescopio (Pieza 12)." } },
+    { refs: [], txt: { en: "At dawn Cosme confesses: he unhooked the Sun to relight its core in his mirror furnace before it died for good — “I stole it to save it.”",
+      fr: "À l'aube, Cosme avoue : il a décroché le Soleil pour rallumer son cœur dans son four à miroirs avant qu'il ne meure pour de bon — « je l'ai volé pour le sauver ».",
+      es: "Al alba, Cosme confiesa: descolgó el Sol para reencender su corazón en su horno de espejos antes de que muriera del todo: «lo robé para salvarlo»." } }
+  ],
+  epilogue: { en: "By festival morning the Great Sun returns, burning brighter than living memory. The town keeps Cosme as its sun-keeper. Case closed — the whole notebook of the valley, too.",
+    fr: "Au matin de la fête, le Grand Soleil revient, plus ardent que dans les mémoires. La ville garde Cosme comme gardien des soleils. Affaire classée — et tout le carnet de la vallée avec elle.",
+    es: "Para la mañana de la fiesta, el Gran Sol vuelve, más ardiente que en la memoria de nadie. El pueblo conserva a Cosme como guardián de los soles. Caso cerrado, y con él todo el cuaderno del valle." }
+}
+];
+if (typeof module !== "undefined" && module.exports) module.exports = { CASES };
+
+/* Qui a volé le Soleil ? — moteur + interface (vanilla JS, zéro dépendance). */
+"use strict";
+
+/* ---------- i18n interface ---------- */
+const UI = {
+  tagline: { en: "A pocket detective notebook", fr: "Un carnet d'enquête de poche", es: "Una libreta de detective de bolsillo" },
+  subtitle: { en: "Six towns, six missing suns. Read, cross-check, accuse.", fr: "Six villes, six soleils disparus. Lis, recoupe, accuse.", es: "Seis pueblos, seis soles desaparecidos. Lee, cruza, acusa." },
+  open: { en: "Open the case", fr: "Ouvrir l'affaire", es: "Abrir el caso" },
+  method: { en: "Method", fr: "Méthode", es: "Método" },
+  methodTitle: { en: "The detective's method", fr: "La méthode du détective", es: "El método del detective" },
+  methodBody: {
+    en: "1. Read every exhibit: witness statements, records, found objects.<br>2. Cross-check timelines: a statement about oneself proves nothing without independent corroboration.<br>3. Mark your board: who was <b>present</b>, who is <b>possible</b>, who is <b>absent</b> (cleared).<br>4. To close a case you must name <b>the culprit</b>, <b>the scene of the theft</b> and <b>the decisive exhibit</b> — the one piece that clears the last remaining suspects.<br>5. Wrong accusations get a useful reply, never the answer. Hints exist, but they dim your stars.",
+    fr: "1. Lisez toutes les pièces : témoignages, registres, objets trouvés.<br>2. Recoupez les horaires : une déclaration sur soi-même ne prouve rien sans corroboración indépendante.<br>3. Marquez votre tableau : qui était <b>présent</b>, qui reste <b>possible</b>, qui est <b>absent</b> (écarté).<br>4. Pour clore une affaire, nommez <b>le coupable</b>, <b>le lieu du vol</b> et <b>l'indice décisif</b> — la pièce qui écarte à elle seule les derniers suspects.<br>5. Une mauvaise accusation reçoit une réponse utile, jamais la solution. Des indices existent, mais ils ternissent vos étoiles.",
+    es: "1. Lee todas las piezas: testimonios, registros, objetos hallados.<br>2. Cruza los horarios: una declaración sobre uno mismo no prueba nada sin corroboración independiente.<br>3. Marca tu tablero: quién estaba <b>presente</b>, quién sigue siendo <b>posible</b>, quién está <b>ausente</b> (descartado).<br>4. Para cerrar un caso debes nombrar <b>al culpable</b>, <b>el lugar del robo</b> y <b>la pista decisiva</b>: la pieza que por sí sola descarta a los últimos sospechosos.<br>5. Una acusación errónea recibe una respuesta útil, nunca la solución. Hay pistas, pero apagan tus estrellas."
+  },
+  difficulty: { en: "Difficulty", fr: "Difficulté", es: "Dificultad" },
+  finale: { en: "Finale", fr: "Finale", es: "Final" },
+  caseWord: { en: "Case", fr: "Affaire", es: "Caso" },
+  tabs: {
+    suspects: { en: "Suspects", fr: "Suspects", es: "Sospechosos" },
+    timeline: { en: "Timeline", fr: "Chronologie", es: "Cronología" },
+    places: { en: "Places", fr: "Lieux", es: "Lugares" },
+    evidence: { en: "Evidence", fr: "Dossier", es: "Expediente" },
+    notes: { en: "My board", fr: "Mon tableau", es: "Mi tablero" }
+  },
+  timelineWord: { en: "That day", fr: "Ce jour-là", es: "Aquel día" },
+  exhibits: { en: "Exhibits", fr: "Pièces du dossier", es: "Piezas del expediente" },
+  exhibit: { en: "Exhibit", fr: "Pièce", es: "Pieza" },
+  types: {
+    alibi: { en: "Alibi", fr: "Alibi", es: "Coartada" },
+    testimony: { en: "Witness", fr: "Témoin", es: "Testigo" },
+    object: { en: "Object", fr: "Objet", es: "Objeto" },
+    report: { en: "Record", fr: "Constat", es: "Registro" },
+    claim: { en: "Statement", fr: "Déclaration", es: "Declaración" },
+    info: { en: "Lead", fr: "Renseignement", es: "Pista" }
+  },
+  board: { en: "Hypothesis board", fr: "Tableau d'hypothèses", es: "Tablero de hipótesis" },
+  boardNote: { en: "Your notes are yours — nothing here is checked.", fr: "Vos notes sont à vous — rien n'est vérifié ici.", es: "Tus notas son tuyas: aquí no se comprueba nada." },
+  markYes: { en: "Present", fr: "Présent", es: "Presente" },
+  markMaybe: { en: "Possible", fr: "Possible", es: "Posible" },
+  markNo: { en: "Absent", fr: "Absent", es: "Ausente" },
+  suspectsWord: { en: "Suspects", fr: "Suspects", es: "Sospechosos" },
+  placesWord: { en: "Scenes to weigh", fr: "Lieux à peser", es: "Lugares a sopesar" },
+  accuse: { en: "Accuse", fr: "Accuser", es: "Acusar" },
+  accuse1: { en: "Name the culprit", fr: "Nommez le coupable", es: "Nombra al culpable" },
+  accuse2: { en: "The scene of the theft", fr: "Le lieu du vol", es: "El lugar del robo" },
+  accuse3: { en: "The decisive exhibit", fr: "L'indice décisif", es: "La pista decisiva" },
+  accuseGo: { en: "Submit to the judge", fr: "Soumettre au juge", es: "Presentar al juez" },
+  pickOne: { en: "Pick all three", fr: "Choisissez les trois", es: "Elige los tres" },
+  hint: { en: "Hint", fr: "Indice", es: "Pista" },
+  hintsLeft: { en: "left", fr: "restant(s)", es: "restante(s)" },
+  hintTitle: { en: "A little help", fr: "Un peu d'aide", es: "Un poco de ayuda" },
+  hintWarn: { en: "Hints dim your final stars. Reveal one?", fr: "Les indices ternissent vos étoiles finales. En révéler un ?", es: "Las pistas apagan tus estrellas finales. ¿Revelar una?" },
+  hintNone: { en: "No hints left — the truth is in the exhibits.", fr: "Plus d'indices — la vérité est dans les pièces.", es: "No quedan pistas: la verdad está en las piezas." },
+  reveal: { en: "Reveal", fr: "Révéler", es: "Revelar" },
+  close: { en: "Close", fr: "Fermer", es: "Cerrar" },
+  judgeWrong: { en: "The judge frowns: Exhibit {n} contradicts your choice.", fr: "Le juge fronce les sourcils : la Pièce {n} contredit votre choix.", es: "El juez frunce el ceño: la Pieza {n} contradice su elección." },
+  judgeClose: { en: "The court senses your intuition — but the file does not hold yet. Re-examine the scene and the exhibits.", fr: "La cour croit deviner votre intuition — mais le dossier ne tient pas encore. Réexaminez la scène et les pièces.", es: "La corte presiente su intuición, pero el expediente aún no se sostiene. Reexamine la escena y las piezas." },
+  judgeNudge: { en: "A good detective also asks for a nudge.", fr: "Un bon enquêteur sait aussi demander un coup de pouce.", es: "Un buen detective también pide un empujoncito." },
+  solvedTitle: { en: "Case closed!", fr: "Affaire classée !", es: "¡Caso cerrado!" },
+  solvedLine: { en: "The jury nods. {name} confesses.", fr: "Le jury hoche la tête. {name} avoue.", es: "El jurado asiente. {name} confiesa." },
+  culprit: { en: "Culprit", fr: "Coupable", es: "Culpable" },
+  scene: { en: "Scene", fr: "Lieu du vol", es: "Lugar" },
+  decisive: { en: "Decisive exhibit", fr: "Indice décisif", es: "Pista decisiva" },
+  reasoning: { en: "The reasoning", fr: "Le raisonnement", es: "El razonamiento" },
+  epilogue: { en: "Epilogue", fr: "Épilogue", es: "Epílogo" },
+  next: { en: "Next case", fr: "Affaire suivante", es: "Caso siguiente" },
+  home: { en: "Notebook", fr: "Carnet", es: "Cuaderno" },
+  review: { en: "Review solution", fr: "Revoir la résolution", es: "Revisar la solución" },
+  restart: { en: "Back to the case", fr: "Retour à l'affaire", es: "Volver al caso" },
+  starsOf: { en: "stars", fr: "étoiles", es: "estrellas" },
+  noHelp: { en: "Closed without help", fr: "Clos sans aide", es: "Cerrado sin ayuda" },
+  withHelp: { en: "Closed with {h} hint(s), {w} wrong try(ies)", fr: "Clos avec {h} indice(s), {w} erreur(s)", es: "Cerrado con {h} pista(s), {w} intento(s) fallido(s)" },
+  reset: { en: "Reset progress", fr: "Réinitialiser la progression", es: "Reiniciar el progreso" },
+  resetAsk: { en: "Erase all progress?", fr: "Effacer toute la progression ?", es: "¿Borrar todo el progreso?" },
+  sound: { en: "Sound", fr: "Son", es: "Sonido" },
+  credit: { en: "Who Stole the Sun? — a game by Z-Code, concept: Cédric Bernadac — MIT", fr: "Qui a volé le Soleil ? — un jeu de Z-Code, concept : Cédric Bernadac — MIT", es: "¿Quién robó el Sol? — un juego de Z-Code, concepto: Cédric Bernadac — MIT" },
+  solvedAll: { en: "Every case closed. The valley shines again.", fr: "Toutes les affaires sont closes. La vallée rayonne de nouveau.", es: "Todos los casos están cerrados. El valle vuelve a brillar." },
+  attempts: { en: "Wrong attempts: {n}", fr: "Accusations erronées : {n}", es: "Acusaciones fallidas: {n}" }
+};
+const ACCENTS = { case1: "#a8c6b0", case2: "#7fb3c8", case3: "#f0c9a0", case4: "#b5c99a", case5: "#e0b8c4", case6: "#f0d47a" };
+
+/* ---------- état ---------- */
+const LS_KEY = "whostolethesun-v1";
+const S = {
+  lang: "en", sound: true, screen: "home", caseId: null, tab: "suspects",
+  acc: { s: null, p: null, k: null }, modal: null, banner: null,
+  progress: {} // caseId -> {solved, stars, wrong, hints, marks:{s__:{}, p__:{}}, solvedSeen}
+};
+function saveState() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify({ lang: S.lang, sound: S.sound, progress: S.progress })); } catch (e) { /* isolated reader */ }
+}
+function loadState() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    if (d && typeof d === "object") {
+      if (["en", "fr", "es"].includes(d.lang)) S.lang = d.lang;
+      if (typeof d.sound === "boolean") S.sound = d.sound;
+      if (d.progress && typeof d.progress === "object") S.progress = d.progress;
+    }
+  } catch (e) { /* lecteur isolé : repartir de zéro */ }
+}
+function prog(id) {
+  if (!S.progress[id]) S.progress[id] = { solved: false, stars: 0, wrong: 0, hints: 0, marks: {} };
+  return S.progress[id];
+}
+const T = (o) => (o && typeof o === "object" && "en" in o ? (o[S.lang] || o.en) : o);
+function fmt(key, vars) { let s = T(UI[key]); for (const k in (vars || {})) s = s.split("{" + k + "}").join(vars[k]); return s; }
+function esc(s) { return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+const byId = (arr, id) => arr.find((x) => x.id === id);
+const caseById = (id) => CASES.find((c) => c.id === id);
+const clueNo = (c, kid) => c.clues.findIndex((k) => k.id === kid) + 1;
+
+/* ---------- validation des affaires (couche formelle) ---------- */
+function validateCase(c) {
+  const errs = [];
+  const th = c.solution.thief;
+  const rivals = c.suspects.filter((s) => s.id !== th).map((s) => s.id);
+  for (const r of rivals) if (!c.clues.some((k) => (k.excl || []).includes(r))) errs.push("rival-never-excluded:" + r);
+  for (const k of c.clues) {
+    if ((k.excl || []).includes(th)) errs.push("thief-excluded:" + k.id);
+    if ((k.exclP || []).includes(c.solution.place)) errs.push("scene-excluded:" + k.id);
+  }
+  for (const p of c.places) {
+    if (p.id === c.solution.place) continue;
+    if (!c.clues.some((k) => (k.exclP || []).includes(p.id))) errs.push("place-never-excluded:" + p.id);
+  }
+  const d = byId(c.clues, c.solution.clue);
+  if (!d) errs.push("decisive-missing");
+  else {
+    if ((d.excl || []).includes(th)) errs.push("decisive-excludes-thief");
+    const needed = (d.excl || []).some((sid) => !c.clues.some((k) => k.id !== d.id && (k.excl || []).includes(sid)));
+    if (!needed) errs.push("decisive-not-necessary");
+  }
+  for (const st of c.explain) for (const r of st.refs || []) if (!byId(c.clues, r)) errs.push("explain-bad-ref:" + r);
+  if (c.hints.length !== 3) errs.push("hints-count:" + c.hints.length);
+  return errs;
+}
+
+/* ---------- portrait SVG ---------- */
+function portrait(f, size) {
+  const sz = size || 72;
+  const skin = f.skin, shirt = f.shirt, hair = f.hair;
+  let over = "";
+  const H = (s) => s; // helper
+  switch (f.hat) {
+    case "chef": over += `<rect x="20" y="4" width="24" height="12" rx="5" fill="#fdfaf1"/><rect x="22" y="14" width="20" height="6" fill="#fdfaf1"/><path d="M20 8 q-4 4 0 8" stroke="#fdfaf1" stroke-width="4" fill="none"/>`; break;
+    case "cap": over += `<path d="M17 20 a15 12 0 0 1 30 0 l3 0 a16 13 0 0 0 -36 0 z" fill="${shirt}"/><rect x="44" y="18" width="12" height="4" rx="2" fill="${shirt}"/>`; break;
+    case "beret": over += `<path d="M16 20 a16 10 0 0 1 32 0 q-16 -6 -32 0z" fill="${hair==="none"?"#5c6b7a":hair}"/><circle cx="32" cy="10" r="2.5" fill="${hair==="none"?"#5c6b7a":hair}"/>`; break;
+    case "hood": over += `<path d="M14 34 q0 -22 18 -22 q18 0 18 22 l-6 2 q0 -14 -12 -14 q-12 0 -12 14z" fill="${shirt}"/>`; break;
+    case "flower": over += `<path d="M15 24 a17 16 0 0 1 34 0 q-6 -10 -17 -10 q-11 0 -17 10z" fill="${hair}"/><circle cx="44" cy="14" r="4" fill="#e8a7b4"/><circle cx="44" cy="14" r="1.6" fill="#f0d47a"/>`; break;
+    case "bun": over += `<path d="M16 24 a16 15 0 0 1 32 0 q-7 -9 -16 -9 q-9 0 -16 9z" fill="${hair}"/><circle cx="32" cy="8" r="6" fill="${hair}"/>`; break;
+    case "sailor": over += `<path d="M14 22 a18 11 0 0 1 36 0 l-4 4 -28 0z" fill="#f2f2ee"/><rect x="28" y="12" width="8" height="8" fill="#e8e0c9"/><path d="M12 24 h40 l-2 -3 h-36z" fill="#f2f2ee"/>`; break;
+    case "pigtails": over += `<path d="M15 24 a17 15 0 0 1 34 0 q-7 -9 -17 -9 q-10 0 -17 9z" fill="${hair}"/><circle cx="13" cy="30" r="6" fill="${hair}"/><circle cx="51" cy="30" r="6" fill="${hair}"/>`; break;
+    case "boater": over += `<rect x="14" y="14" width="36" height="8" rx="3" fill="#efe6cd"/><rect x="20" y="8" width="24" height="7" rx="2" fill="#f7f1e0"/><rect x="14" y="18" width="36" height="2.5" fill="#c8402e"/>`; break;
+    case "veil": over += `<path d="M13 36 q0 -24 19 -24 q19 0 19 24 l-5 0 q0 -17 -14 -17 q-14 0 -14 17z" fill="#f2eee2"/><path d="M15 24 a17 15 0 0 1 34 0 q-7 -10 -17 -10 q-10 0 -17 10z" fill="${hair}"/>`; break;
+    case "chain": over += `<path d="M18 22 a14 12 0 0 1 28 0 q-5 -7 -14 -7 q-9 0 -14 7z" fill="${hair}"/><path d="M20 46 q12 8 24 0" stroke="#e0b45c" stroke-width="3" fill="none"/><circle cx="32" cy="50" r="2.6" fill="#e0b45c"/>`; break;
+    case "bandana": over += `<path d="M16 23 a16 11 0 0 1 32 0 q-16 -7 -32 0z" fill="${shirt}"/><path d="M14 23 l-4 6 6 -1z" fill="${shirt}"/>`; break;
+    default: over += `<path d="M16 25 a16 14 0 0 1 32 0 q-8 -10 -16 -10 q-8 0 -16 10z" fill="${hair}"/>`;
+  }
+  let face = "";
+  if (f.extra === "cat") {
+    face = `<path d="M18 22 l-2 -9 8 5z" fill="${hair}"/><path d="M46 22 l2 -9 -8 5z" fill="${hair}"/>
+      <circle cx="26" cy="32" r="2.4" fill="#33291f"/><circle cx="38" cy="32" r="2.4" fill="#33291f"/>
+      <path d="M29 38 q3 2.6 6 0" stroke="#33291f" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <path d="M14 34 h9 M14 39 h9 M41 34 h9 M41 39 h9" stroke="#9b9b9b" stroke-width="1.4"/>`;
+  } else {
+    face = `<circle cx="26" cy="31" r="2.2" fill="#33291f"/><circle cx="38" cy="31" r="2.2" fill="#33291f"/>
+      <path d="M28.5 38 q3.5 3 7 0" stroke="#33291f" stroke-width="1.8" fill="none" stroke-linecap="round"/>`;
+  }
+  if ((f.extra === "glasses")) face += `<circle cx="26" cy="31" r="5.5" fill="none" stroke="#33291f" stroke-width="1.6"/><circle cx="38" cy="31" r="5.5" fill="none" stroke="#33291f" stroke-width="1.6"/><path d="M31.5 31 h1" stroke="#33291f" stroke-width="1.6"/>`;
+  if (f.extra === "beard") face += `<path d="M22 38 q10 14 20 0 q-2 12 -10 12 q-8 0 -10 -12z" fill="${hair}" opacity=".9"/>`;
+  if (f.extra === "mustache") face += `<path d="M26 36.5 q6 -3 12 0 q-6 3.5 -12 0z" fill="${hair}"/>`;
+  if (f.extra === "blush") face += `<circle cx="21.5" cy="35" r="2.4" fill="#e8a79b" opacity=".7"/><circle cx="42.5" cy="35" r="2.4" fill="#e8a79b" opacity=".7"/>`;
+  if (f.extra === "paint") face += `<circle cx="43" cy="27" r="2.2" fill="#c8402e" opacity=".85"/><circle cx="20" cy="40" r="1.6" fill="#37b3c8" opacity=".8"/>`;
+  if (f.extra === "necklace") face += `<path d="M24 46 q8 7 16 0" stroke="#f0d47a" stroke-width="2.2" fill="none"/>`;
+  if (f.extra === "bowtie") face += `<path d="M26 50 l6 -3 v7z M38 50 l-6 -3 v7z" fill="#c8402e"/><circle cx="32" cy="50" r="1.6" fill="#8f2b1e"/>`;
+  const shirtSvg = f.extra === "cat"
+    ? `<ellipse cx="32" cy="58" rx="20" ry="12" fill="${skin}"/>`
+    : `<path d="M12 62 q0 -16 20 -16 q20 0 20 16z" fill="${shirt}"/>` + (f.extra === "stripe" ? `<path d="M15 56 h34 M14 60 h36" stroke="#33291f" stroke-width="2" opacity=".55"/>` : "");
+  return `<svg viewBox="0 0 64 64" width="${sz}" height="${sz}" role="img" aria-hidden="true">
+    ${shirtSvg}<circle cx="32" cy="30" r="14" fill="${skin}"/>${over}${face}</svg>`;
+}
+const SUN_MARK = `<svg viewBox="0 0 64 64" width="40" height="40" aria-hidden="true"><g fill="#e8930c">
+  ${Array.from({ length: 12 }, (_, i) => { const a = i * Math.PI / 6; const x1 = 32 + Math.cos(a) * 22, y1 = 32 + Math.sin(a) * 22, x2 = 32 + Math.cos(a) * 29, y2 = 32 + Math.sin(a) * 29; return `<path d="M${x1.toFixed(1)} ${y1.toFixed(1)} L${x2.toFixed(1)} ${y2.toFixed(1)}" stroke="#e8930c" stroke-width="3.4" stroke-linecap="round"/>`; }).join("")}
+  <circle cx="32" cy="32" r="15" fill="#f5b731"/><circle cx="27" cy="29" r="2" fill="#33291f"/><circle cx="37" cy="29" r="2" fill="#33291f"/><path d="M27 36 q5 4 10 0" stroke="#33291f" stroke-width="2" fill="none" stroke-linecap="round"/></g></svg>`;
+
+/* ---------- audio ---------- */
+let AC = null;
+function beep(freq, dur, type, gain, when) {
+  if (!S.sound) return;
+  try {
+    if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+    if (AC.state === "suspended") AC.resume();
+    const o = AC.createOscillator(), g = AC.createGain();
+    o.type = type || "sine"; o.frequency.value = freq;
+    g.gain.value = 0;
+    o.connect(g); g.connect(AC.destination);
+    const t0 = AC.currentTime + (when || 0);
+    g.gain.setValueAtTime(0, t0);
+    g.gain.linearRampToValueAtTime(gain || 0.08, t0 + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + (dur || 0.15));
+    o.start(t0); o.stop(t0 + (dur || 0.15) + 0.05);
+  } catch (e) { /* audio absent : silencieux */ }
+}
+const SND = {
+  click: () => beep(660, 0.05, "triangle", 0.05),
+  page: () => beep(320, 0.09, "triangle", 0.04),
+  wrong: () => { beep(392, 0.16, "sine", 0.09); beep(311, 0.22, "sine", 0.09, 0.14); },
+  hint: () => { beep(523, 0.1, "sine", 0.06); beep(784, 0.14, "sine", 0.05, 0.1); },
+  stamp: () => { beep(196, 0.14, "square", 0.05); beep(98, 0.2, "sine", 0.08, 0.02); },
+  win: () => [523, 659, 784, 1047].forEach((f, i) => beep(f, 0.16, "sine", 0.07, i * 0.11))
+};
+
+/* ---------- logique d'accusation ---------- */
+function accuseResult(c, sId, pId, kId) {
+  const sol = c.solution;
+  const ok = sId === sol.thief && pId === sol.place && kId === sol.clue;
+  let msg = null, clueRef = null;
+  if (!ok && sId !== sol.thief) {
+    const hit = c.clues.find((k) => (k.excl || []).includes(sId));
+    if (hit) { msg = "judgeWrong"; clueRef = clueNo(c, hit.id); }
+    else msg = "judgeClose";
+  } else if (!ok) msg = "judgeClose";
+  return { ok, msg, clueRef };
+}
+function starsFor(wrong, hints) { return hints === 0 && wrong <= 1 ? 3 : hints <= 2 && wrong <= 3 ? 2 : 1; }
+
+/* ---------- rendu ---------- */
+const app = () => document.getElementById("app");
+function suns(n) { let s = ""; for (let i = 0; i < 5; i++) s += `<span class="sun-dot${i < n ? " on" : ""}">☀</span>`; return `<span class="suns" title="${esc(T(UI.difficulty))}">${s}</span>`; }
+function starsHtml(n) { let s = ""; for (let i = 0; i < 3; i++) s += `<span class="star${i < n ? " on" : ""}">★</span>`; return s; }
+
+function renderHeader() {
+  const onHome = S.screen === "home";
+  return `<header class="topbar">
+    <button class="brand${onHome ? "" : " click"}" data-action="${onHome ? "noop" : "home"}">${SUN_MARK}<span class="brand-txt">Qui a volé le Soleil ?<small>${esc(T(UI.tagline))}</small></span></button>
+    <div class="ctrl">
+      <div class="lang" role="group" aria-label="language">
+        ${["en", "fr", "es"].map((l) => `<button data-action="lang" data-l="${l}" class="lang-b${S.lang === l ? " cur" : ""}">${l.toUpperCase()}</button>`).join("")}
+      </div>
+      <button data-action="sound" class="icon-b" title="${esc(T(UI.sound))}" aria-label="${esc(T(UI.sound))}">${S.sound ? "🔊" : "🔇"}</button>
+      ${onHome ? `<button data-action="method" class="ghost-b">${esc(T(UI.method))}</button>` : ""}
+    </div>
+  </header>`;
+}
+
+function renderHome() {
+  const cards = CASES.map((c, i) => {
+    const p = prog(c.id);
+    return `<button class="case-card${p.solved ? " done" : ""}" data-action="open" data-id="${c.id}" style="--acc:${ACCENTS[c.id]}">
+      <span class="cc-band"></span>
+      <span class="cc-num">${esc(T(UI.caseWord))} ${i + 1}${c.finale ? ` <span class="finale-b">${esc(T(UI.finale))}</span>` : ""}</span>
+      <span class="cc-title">${esc(T(c.title))}</span>
+      <span class="cc-town">${esc(c.town)}</span>
+      <span class="cc-foot">${suns(c.diff)} ${p.solved ? `<span class="mini-stamp">${esc(T(UI.solvedTitle)).replace("!", "")}</span> ${starsHtml(p.stars)}` : `<span class="cc-open">${esc(T(UI.open))} →</span>`}</span>
+    </button>`;
+  }).join("");
+  const solvedAll = CASES.every((x) => prog(x.id).solved);
+  return `<section class="home">
+    <div class="hero">
+      <h1>${esc(T(UI.subtitle))}</h1>
+    </div>
+    <div class="grid">${cards}</div>
+    ${solvedAll ? `<p class="all-done">✨ ${esc(T(UI.solvedAll))}</p>` : ""}
+    <p class="credit">${esc(T(UI.credit))}</p>
+  </section>`;
+}
+
+function renderMethod() {
+  return `<section class="method sheet">
+    <h2>🔎 ${esc(T(UI.methodTitle))}</h2>
+    <p>${UI.methodBody[S.lang]}</p>
+    <button data-action="home" class="main-b">${esc(T(UI.home))}</button>
+  </section>`;
+}
+
+function renderCase() {
+  const c = caseById(S.caseId);
+  const p = prog(c.id);
+  const tabs = ["suspects", "timeline", "places", "evidence", "notes"];
+  let body = "";
+  if (S.tab === "suspects") {
+    body = `<div class="cards">` + c.suspects.map((s) => `
+      <div class="sus-card" style="--acc:${ACCENTS[c.id]}">
+        <div class="sus-face">${portrait(s.face)}</div>
+        <div class="sus-name">${esc(s.name)}</div>
+        <div class="sus-role">${esc(T(s.role))}</div>
+        <div class="sus-note">“${esc(T(s.note))}”</div>
+        <div class="sus-marks" data-sus="${s.id}">${markButtons(s.id, p)}</div>
+      </div>`).join("") + `</div>`;
+  } else if (S.tab === "timeline") {
+    body = `<h3 class="tab-h">🕒 ${esc(T(UI.timelineWord))}</h3><ol class="tl">` + c.timeline.map((e) => `
+      <li class="tl-ev"><span class="tl-t">${esc(e.t)}</span><span class="tl-x">${esc(T(e.txt))}</span></li>`).join("") + `</ol>`;
+  } else if (S.tab === "places") {
+    body = `<h3 class="tab-h">🗺️ ${esc(T(UI.placesWord))}</h3><div class="cards">` + c.places.map((pl) => `
+      <div class="pl-card" style="--acc:${ACCENTS[c.id]}">
+        <div class="pl-pin">📍</div>
+        <div class="sus-name">${esc(T(pl.name))}</div>
+        <div class="sus-marks" data-pla="${pl.id}">${markButtons(pl.id, p)}</div>
+      </div>`).join("") + `</div>`;
+  } else if (S.tab === "evidence") {
+    body = `<h3 class="tab-h">🗂️ ${esc(T(UI.exhibits))}</h3><div class="clues">` + c.clues.map((k, i) => `
+      <div class="clue t-${k.type}">
+        <div class="clue-top"><span class="clue-no">${esc(T(UI.exhibit))} ${i + 1}</span><span class="clue-type">${esc(T(UI.types[k.type]))}</span></div>
+        <div class="clue-src">${esc(T(k.src))}</div>
+        <p class="clue-txt">${esc(T(k.txt))}</p>
+      </div>`).join("") + `</div>`;
+  } else {
+    body = renderBoard(c, p);
+  }
+  const hintLeft = 3 - p.hints;
+  return `<section class="case" style="--acc:${ACCENTS[c.id]}">
+    <div class="case-head">
+      <button data-action="home" class="ghost-b">← ${esc(T(UI.home))}</button>
+      <div class="case-title">
+        <h2>${esc(T(UI.caseWord))} ${CASES.indexOf(c) + 1} — ${esc(T(c.title))}</h2>
+        <span class="case-town">${esc(c.town)} · ${suns(c.diff)}${c.finale ? ` · <span class="finale-b">${esc(T(UI.finale))}</span>` : ""}</span>
+      </div>
+      <p class="case-intro">${esc(T(c.intro))}</p>
+      ${p.wrong && !p.solved ? `<p class="tries">${esc(fmt("attempts", { n: p.wrong }))}</p>` : ""}
+    </div>
+    <nav class="tabbar" role="tablist">${tabs.map((tb) => `<button role="tab" aria-selected="${S.tab === tb}" data-action="tab" data-tab="${tb}" class="tab-b${S.tab === tb ? " cur" : ""}">${esc(T(UI.tabs[tb]))}</button>`).join("")}</nav>
+    <div class="tab-body">${body}</div>
+    <div class="actionbar">
+      ${p.solved
+        ? `<button data-action="solution" class="main-b">✓ ${esc(T(UI.review))}</button><span class="mini-stamp big">${esc(T(UI.solvedTitle))}</span>${starsHtml(p.stars)}`
+        : `<button data-action="hint" class="ghost-b">💡 ${esc(T(UI.hint))} <small>(${hintLeft} ${esc(T(UI.hintsLeft))})</small></button>
+           <button data-action="accuse" class="main-b">⚖️ ${esc(T(UI.accuse))}</button>`}
+    </div>
+  </section>`;
+}
+
+function markButtons(id, p) {
+  const cur = (p.marks[id] || "");
+  const mk = (v, label, sym) => `<button data-action="mark" data-id="${id}" data-v="${v}" class="mk${cur === v ? " cur" : ""}" aria-pressed="${cur === v}">${sym}<span>${esc(label)}</span></button>`;
+  return mk("yes", T(UI.markYes), "✓") + mk("maybe", T(UI.markMaybe), "?") + mk("no", T(UI.markNo), "✗");
+}
+function renderBoard(c, p) {
+  return `<h3 class="tab-h">📌 ${esc(T(UI.board))}</h3>
+  <p class="board-note">${esc(T(UI.boardNote))}</p>
+  <table class="board"><thead><tr><th></th><th>${esc(T(UI.markYes))}</th><th>${esc(T(UI.markMaybe))}</th><th>${esc(T(UI.markNo))}</th></tr></thead><tbody>
+  <tr class="board-sep"><td colspan="4">${esc(T(UI.suspectsWord))}</td></tr>
+  ${c.suspects.map((s) => `<tr><td class="bd-name"><span class="bd-mini">${portrait(s.face, 30)}</span> ${esc(s.name)}<small>${esc(T(s.role))}</small></td>${["yes", "maybe", "no"].map((v) => `<td class="bd-cell"><button data-action="mark" data-id="${s.id}" data-v="${v}" class="mk cell${(p.marks[s.id] || "") === v ? " cur" : ""}" aria-label="${esc(s.name)} ${v}" aria-pressed="${(p.marks[s.id] || "") === v}">${v === "yes" ? "✓" : v === "maybe" ? "?" : "✗"}</button></td>`).join("")}</tr>`).join("")}
+  <tr class="board-sep"><td colspan="4">${esc(T(UI.placesWord))}</td></tr>
+  ${c.places.map((pl) => `<tr><td class="bd-name">📍 ${esc(T(pl.name))}</td>${["yes", "maybe", "no"].map((v) => `<td class="bd-cell"><button data-action="mark" data-id="${pl.id}" data-v="${v}" class="mk cell${(p.marks[pl.id] || "") === v ? " cur" : ""}" aria-label="${esc(T(pl.name))} ${v}" aria-pressed="${(p.marks[pl.id] || "") === v}">${v === "yes" ? "✓" : v === "maybe" ? "?" : "✗"}</button></td>`).join("")}</tr>`).join("")}
+  </tbody></table>`;
+}
+
+function renderModal() {
+  if (!S.modal) return "";
+  const c = caseById(S.caseId);
+  if (S.modal === "accuse") {
+    const sel = (list, cur, attr, labelFn) => list.map((x) => `<button data-action="pick" data-k="${attr}" data-v="${x.id}" class="pick-b${cur === x.id ? " cur" : ""}">${labelFn(x)}</button>`).join("");
+    const ready = S.acc.s && S.acc.p && S.acc.k;
+    return `<div class="veil" data-action="closemodal"><div class="modal" role="dialog" aria-modal="true" stop>
+      <h3>⚖️ ${esc(T(UI.accuse))}</h3>
+      <p class="m-sec">${esc(T(UI.accuse1))}</p>
+      <div class="picks">${sel(c.suspects, S.acc.s, "s", (x) => portrait(x.face, 44) + `<span>${esc(x.name)}<small>${esc(T(x.role))}</small></span>`)}</div>
+      <p class="m-sec">${esc(T(UI.accuse2))}</p>
+      <div class="picks">${sel(c.places, S.acc.p, "p", (x) => `📍 <span>${esc(T(x.name))}</span>`)}</div>
+      <p class="m-sec">${esc(T(UI.accuse3))}</p>
+      <div class="picks">${c.clues.map((k, i) => `<button data-action="pick" data-k="k" data-v="${k.id}" class="pick-b wide${S.acc.k === k.id ? " cur" : ""}"><b>${esc(T(UI.exhibit))} ${i + 1}</b> · ${esc(T(k.src))}</button>`).join("")}</div>
+      ${S.banner ? `<p class="judge">${S.banner}</p>` : ""}
+      <div class="m-actions">
+        <button data-action="closemodal" class="ghost-b">${esc(T(UI.close))}</button>
+        <button data-action="accuse-go" class="main-b"${ready ? "" : " disabled"}>${esc(T(UI.accuseGo))}</button>
+      </div>
+      ${!ready ? `<p class="m-hint">${esc(T(UI.pickOne))}</p>` : ""}
+    </div></div>`;
+  }
+  if (S.modal === "hint") {
+    const p = prog(c.id);
+    const shown = c.hints.slice(0, p.hints).map((h, i) => `<li class="hint-li">💡 ${esc(T(h))}</li>`).join("");
+    const canMore = p.hints < 3 && !p.solved;
+    return `<div class="veil" data-action="closemodal"><div class="modal" role="dialog" aria-modal="true">
+      <h3>💡 ${esc(T(UI.hintTitle))}</h3>
+      ${shown ? `<ul class="hints">${shown}</ul>` : `<p>${esc(T(UI.hintWarn))}</p>`}
+      ${p.solved ? "" : canMore ? `<div class="m-actions"><button data-action="closemodal" class="ghost-b">${esc(T(UI.close))}</button><button data-action="reveal-hint" class="main-b">${esc(T(UI.reveal))}</button></div>` : `<p class="m-hint">${esc(T(UI.hintNone))}</p>`}
+    </div></div>`;
+  }
+  return "";
+}
+
+function renderSolution(c) {
+  const p = prog(c.id);
+  const th = byId(c.suspects, c.solution.thief);
+  const pl = byId(c.places, c.solution.place);
+  const kd = byId(c.clues, c.solution.clue);
+  const idx = CASES.indexOf(c);
+  const next = CASES[idx + 1];
+  const starNote = p.hints === 0 && p.wrong === 0 ? fmt("noHelp") : fmt("withHelp", { h: p.hints, w: p.wrong });
+  return `<section class="solution" style="--acc:${ACCENTS[c.id]}">
+    <div class="sol-head">
+      <div class="stamp">${esc(T(UI.solvedTitle)).replace("!", "")}</div>
+      <h2>${esc(fmt("solvedLine", { name: T(th.name) }))}</h2>
+      ${starsHtml(p.stars)} <small>${esc(starNote)}</small>
+    </div>
+    <div class="sol-grid">
+      <div class="sol-por">${portrait(th.face, 120)}<b>${esc(th.name)}</b><span>${esc(T(th.role))}</span></div>
+      <div class="sol-summary">
+        <p><b>${esc(T(UI.culprit))} :</b> ${esc(th.name)}</p>
+        <p><b>${esc(T(UI.scene))} :</b> ${esc(T(pl.name))}</p>
+        <p><b>${esc(T(UI.decisive))} :</b> ${esc(T(UI.exhibit))} ${clueNo(c, kd.id)} — ${esc(T(kd.src))}</p>
+      </div>
+    </div>
+    <h3>🧵 ${esc(T(UI.reasoning))}</h3>
+    <ol class="steps">` + c.explain.map((st) => `<li>${esc(T(st.txt))} <span class="refs">${(st.refs || []).map((r) => `<button class="refchip" data-action="goto-evidence" data-clue="${r}">${esc(T(UI.exhibit))} ${clueNo(c, r)}</button>`).join("")}</span></li>`).join("") + `</ol>
+    <h3>🌅 ${esc(T(UI.epilogue))}</h3>
+    <p class="epi">${esc(T(c.epilogue))}</p>
+    <div class="m-actions">
+      <button data-action="home" class="ghost-b">← ${esc(T(UI.home))}</button>
+      <button data-action="tab-case" class="ghost-b">${esc(T(UI.restart))}</button>
+      ${next ? `<button data-action="open" data-id="${next.id}" class="main-b">${esc(T(UI.next))} →</button>` : `<button data-action="home" class="main-b">${esc(T(UI.home))}</button>`}
+    </div>
+  </section>`;
+}
+
+function render() {
+  const root = document.getElementById("app");
+  let inner = "";
+  if (S.screen === "home") inner = renderHome();
+  else if (S.screen === "method") inner = renderMethod();
+  else if (S.screen === "case") inner = renderCase();
+  else if (S.screen === "solution") inner = renderSolution(caseById(S.caseId));
+  root.innerHTML = renderHeader() + `<main class="wrap">${inner}</main>` + renderModal();
+  document.documentElement.lang = S.lang;
+  const t = { home: "Qui a volé le Soleil ?", fr: "Qui a volé le Soleil ?", es: "¿Quién robó el Sol?" };
+  document.title = S.lang === "en" ? "Who Stole the Sun?" : t[S.lang];
+}
+
+/* ---------- interactions ---------- */
+function submitAccusation() {
+  const c = caseById(S.caseId);
+  const p = prog(c.id);
+  if (!(S.acc.s && S.acc.p && S.acc.k)) return { ok: false, msg: null, clueRef: null };
+  const res = accuseResult(c, S.acc.s, S.acc.p, S.acc.k);
+  if (res.ok) {
+    p.solved = true;
+    p.stars = starsFor(p.wrong, p.hints);
+    SND.stamp(); setTimeout(SND.win, 250);
+    S.screen = "solution"; S.modal = null; S.banner = null;
+    saveState();
+  } else {
+    p.wrong++;
+    SND.wrong();
+    let msg = fmt(res.msg, res.clueRef ? { n: res.clueRef } : {});
+    if (p.wrong >= 2 && p.hints < 3) msg += " " + T(UI.judgeNudge);
+    S.banner = msg;
+    saveState();
+  }
+  return res;
+}
+
+function onAction(el) {
+  const a = el.getAttribute("data-action");
+  const c = S.caseId ? caseById(S.caseId) : null;
+  const p = c ? prog(c.id) : null;
+  switch (a) {
+    case "noop": break;
+    case "home": SND.page(); S.screen = "home"; S.modal = null; S.banner = null; break;
+    case "method": SND.page(); S.screen = "method"; break;
+    case "lang": S.lang = el.getAttribute("data-l"); SND.click(); saveState(); break;
+    case "sound": S.sound = !S.sound; SND.click(); saveState(); break;
+    case "open": {
+      SND.page();
+      S.caseId = el.getAttribute("data-id");
+      const pr = prog(S.caseId);
+      S.screen = pr.solved ? "solution" : "case";
+      S.tab = "suspects"; S.acc = { s: null, p: null, k: null }; S.banner = null; S.modal = null;
+      break;
+    }
+    case "tab": SND.click(); S.tab = el.getAttribute("data-tab"); break;
+    case "mark": {
+      SND.click();
+      const id = el.getAttribute("data-id"), v = el.getAttribute("data-v");
+      p.marks[id] = p.marks[id] === v ? "" : v;
+      saveState(); break;
+    }
+    case "hint": SND.hint(); S.modal = "hint"; break;
+    case "reveal-hint": {
+      if (p.hints < 3 && !p.solved) { p.hints++; SND.hint(); saveState(); }
+      break;
+    }
+    case "accuse": SND.click(); S.modal = "accuse"; S.banner = null; break;
+    case "closemodal": SND.click(); S.modal = null; S.banner = null; break;
+    case "pick": {
+      SND.click();
+      const k = el.getAttribute("data-k");
+      S.acc[k] = el.getAttribute("data-v");
+      break;
+    }
+    case "accuse-go": {
+      if (!(S.acc.s && S.acc.p && S.acc.k)) break;
+      submitAccusation();
+      break;
+    }
+    case "goto-evidence": {
+      SND.click();
+      S.tab = "evidence"; S.screen = "case"; S.modal = null;
+      render();
+      const n = clueNo(c, el.getAttribute("data-clue"));
+      const elx = document.querySelectorAll(".clue")[n - 1];
+      if (elx) { elx.scrollIntoView({ behavior: "smooth", block: "center" }); elx.classList.add("flash"); setTimeout(() => elx.classList.remove("flash"), 1600); }
+      return;
+    }
+    case "tab-case": SND.page(); S.screen = "case"; S.tab = "evidence"; break;
+    case "solution": SND.page(); S.screen = "solution"; break;
+    case "reset": {
+      if (window.confirm(T(UI.resetAsk))) { S.progress = {}; SND.page(); saveState(); }
+      break;
+    }
+  }
+  render();
+}
+function boot() {
+  loadState();
+  const nav = (navigator.language || "en").slice(0, 2).toLowerCase();
+  try { if (!localStorage.getItem(LS_KEY) && ["en", "fr", "es"].includes(nav)) S.lang = nav; } catch (e) { }
+  render();
+  document.addEventListener("click", (ev) => {
+    const el = ev.target.closest("[data-action]");
+    if (!el) return;
+    if (el.getAttribute("data-action") === "closemodal" && ev.target.closest(".modal")) return;
+    ev.preventDefault();
+    onAction(el);
+  });
+  document.addEventListener("keydown", (ev) => { if (ev.key === "Escape" && S.modal) { S.modal = null; render(); } });
+  if (typeof window !== "undefined") {
+    window.__SV = {
+      state: () => JSON.parse(JSON.stringify({ lang: S.lang, screen: S.screen, caseId: S.caseId, tab: S.tab, acc: S.acc, progress: S.progress, banner: S.banner })),
+      setLang: (l) => { S.lang = l; render(); },
+      open: (id) => { S.caseId = id; S.screen = prog(id).solved ? "solution" : "case"; render(); },
+      tab: (t) => { S.tab = t; render(); },
+      accuse: (s, p2, k) => accuseResult(caseById(S.caseId), s, p2, k),
+      accuseGo: (s, pl, k) => { S.acc = { s, p: pl, k }; return submitAccusation(); },
+      hint: () => { const p = prog(S.caseId); if (p.hints < 3) { p.hints++; saveState(); render(); } },
+      mark: (id, v) => { const p = prog(S.caseId); p.marks[id] = v; saveState(); render(); },
+      reset: () => { S.progress = {}; saveState(); render(); },
+      validate: () => CASES.map((c) => ({ id: c.id, errs: validateCase(c) })),
+      cases: CASES
+    };
+  }
+}
+if (typeof document !== "undefined" && document.getElementById("app")) boot();
+
+</script>
+</body>
+</html>
