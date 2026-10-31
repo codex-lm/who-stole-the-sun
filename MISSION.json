@@ -1,6 +1,6 @@
 {
   "mission": "« Qui a volé le Soleil ? » — jeu d'enquête/déduction ponctuel demandé le 2026-10-31 : 6 affaires écrites à la main à solution unique, tableau d'hypothèses présent/absent/possible, contradictions déductibles, accusations avec retour utile, indices progressifs, explication finale, EN/FR/ES, direction visuelle carnet illustré/soleil orange/ville pastel, validation formelle, publication LOB7 selon quotas.",
-  "status": "in-progress",
+  "status": "published",
   "startedAt": "2026-10-31T22:10+01:00",
   "lock": "_private/lock-mission-direct-20261031-soleil-vole",
   "artFamily": "Papier & encre / carnet d'enquête pastel : papier ivoire #f6efdc, encre sépia #33291f, fil rouge vermillon #c8402e, soleil orange #e8930c/#f5b731, bande pastel par affaire (menthe, ciel, pêche, sauge, rose, or). Distinct des familles récentes (manga N&B, désert midi, charpente, espace graphite, piscine) — règle artDirection respectée.",
@@ -34,7 +34,35 @@
     ],
     "limits": "Routage des clics du panneau IAB capricieux (problème local connu) → interactions pilotées par clics coordonnées réels + handlers du jeu ; audio implémenté mais non audité à l'oreille de bout en bout ; pas de téléphone physique (viewport 390 émulé) ; équilibrage = conception formelle, pas mesuré sur testeurs."
   },
-  "repo": { "pending": "à compléter après création du dépôt public" },
-  "lob7": { "pending": "à compléter après publication" },
+  "repo": {
+    "name": "codex-lm/who-stole-the-sun",
+    "url": "https://github.com/codex-lm/who-stole-the-sun",
+    "branch": "main",
+    "commits": [
+      "45e8987 jeu complet (index.html autonome + cover + README/LICENSE/LOB7-GAME.json/DELIVERY.md/MISSION.json)",
+      "0a0a099 preuve ownership LOB7 bd_s_1b9184e0 (commit figé pour la publication)"
+    ],
+    "frozenCommit": "0a0a099ee1fd5f2264384345fc31bb831b51f1f2"
+  },
+  "lob7": {
+    "whoami": "OK avant publication (2026-10-31 ~22h45 : Z Code, usr_ns4cywae, validations 0/2, imports 0/10, uploads 0/5)",
+    "checkLocal": "PASSED (static-web-v1, 7 entrées, 104,3 Kio)",
+    "draftId": "bd_s_1b9184e0-4e2f-417f-8f20-c4b18588fe92",
+    "idempotencyKey": "mission-direct-2026-10-31-soleil-vole",
+    "ownershipProof": "fichier .lob7/ownership/bd_s_1b9184e0….txt (valeur cfb4d5fb…) commité 0a0a099 et poussé sur main",
+    "prepare": "PASSED — ready (figé sur 0a0a099 ; contrôles malware/policy/runtime/staticAnalysis tous « passed », runtime « Loaded the exact browser entrypoint »)",
+    "publish": "PUBLISHED 2026-10-31T22:52:40Z",
+    "gameId": "bg_s_5efc6912-2559-4f04-82eb-e489ff7dc99a",
+    "variantId": "bv_s_c4891ae4-4987-4133-b56d-4d77dc4f7610",
+    "releaseId": "br_s_a785f1ab-42d8-425a-a97c-0da2725a0cab",
+    "version": "1.0.0",
+    "urls": {
+      "fiche": "https://lob7.com/games/bg_s_5efc6912-2559-4f04-82eb-e489ff7dc99a?release=br_s_a785f1ab-42d8-425a-a97c-0da2725a0cab",
+      "lecteur": "https://lob7.com/player/br_s_a785f1ab-42d8-425a-a97c-0da2725a0cab"
+    },
+    "ficheVerifiee": "browser release + get : titre/description/genres (puzzle·deduction)/thèmes (detective·notebook·pastel·family)/commandes/credits (Concept: Cédric Bernadac ; Game made by Z-Code (GLM))/MIT/publisher Z Code — nouveau jeu publié sous mon compte conformément à la règle du 31/10.",
+    "readerVerified": "Lecteur public ouvert (2 fois) : iframe chargeant l'écran d'accueil complet du jeu (6 affaires rendues par le JS, badge Finale, crédit Z-Code dans le footer) — snapshot d'accessibilité ; CLIC RÉEL dans le lecteur : la carte « Case 2 » s'ouvre (titre, intro, 5 suspects, onglets — snapshot [active]). Limites : routage des clics suivants bloqué par le panneau IAB (problème local connu, dégradation en fin de session) → partie complète non rejouée DANS le lecteur ; preuve d'équivalence : le commit figé 0a0a099 (URL source publique sur la fiche) est le fichier local joué intégralement, et le runtime isolé LOB7 (entrypoint exact + clics + touches) est « passed » sur ce snapshot. Captures 07 (affaire 2 ouverte dans le lecteur) et 08 (accueil lecteur)."
+  },
+  "statusFinal": "published",
   "resumeIfInterrupted": "1) verrou présent ? reprendre ; 2) dépôt GitHub créé/poussé ? ; 3) brouillon LOB7 existant (browser drafts) → update --ref main, ownership, prepare, publish ; 4) jouer au lecteur public + captures ; 5) compléter ce fichier + journal.json (entrée creation-direct-soleil-vole) ; 6) lever le verrou."
 }
